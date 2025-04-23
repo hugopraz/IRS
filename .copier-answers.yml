@@ -1,0 +1,9 @@
+# Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
+_commit: 3179c16
+_src_path: https://github.com/schwallergroup/copier-liac-minimal.git
+author_email: hugo.praz@epfl.ch
+author_name: Hugo
+github_org: hugopraz
+package_name: irs
+project_name: IRS
+short_description: IRSimulator
