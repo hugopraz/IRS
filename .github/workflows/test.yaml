@@ -1,5 +1,11 @@
 name: Run tests
-on: push
+on:
+  push:
+    paths-ignore:
+      - 'README.md'
+      - '*.md'
+      - 'docs/**'
+  pull_request:
 
 jobs:
   test:
