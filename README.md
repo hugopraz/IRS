@@ -52,6 +52,31 @@ This usage example shows how to quickly leverage the package's main functionalit
 After importing the `main_func` (to be renamed by you), you simply pass in your `data` and get the `result` (this is just an example, your package might have other inputs and outputs). 
 Short and sweet, but the real power lies in the detailed documentation.
 
+
+## 🛠️ Installation
+Pip install
+IRS can be installed using pip
+```bash
+pip install IRS
+```
+
+Github
+The package can also be installed from the GitHub repositroy via pip using the following command
+```bash
+pip install git+https://github.com/ryanschen0/IRS
+```
+
+Git
+Clone the repository form github
+```bash
+git clone https://github.com/ryanschen0/IRS.git
+cd path/to/IRS
+```
+
+Install the package
+```bash
+pip install -e
+```
 ## 👩‍💻 Installation
 
 Create a new environment, you may also give the environment a different name. 
