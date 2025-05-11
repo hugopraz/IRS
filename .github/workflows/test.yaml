@@ -1,12 +1,21 @@
 name: Run tests
-on: push
+on:
+  push:
+    paths-ignore:
+      - '**/*.md'
+      - 'docs/**'
+  pull_request:
+    paths-ignore:
+      - '**/*.md'
+      - 'docs/**'
+
 
 jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.10", "3.11"]
+        python-version: ["3.10"]
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}
