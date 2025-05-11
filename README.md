@@ -8,12 +8,11 @@ IRS
 
 <br>
 
-
 ## Infra-Red Simulator (IRS)
-This project focuses on the simulation of IR spectra.
-The project has two functionalities, giving two different approaches.
+IRS – Infra-Red Simulator – is a Python-based application developed for the simulation and visualization of Infra-Red (IR) spectra of molecules. It provides a web-based interface for converting molecular names or SMILES strings into fully optimized 3D structures, performing vibrational analysis via quantum chemistry packages, and plotting the corresponding IR spectrum.
 
-The first one is the simualtion of IR spectra using Psi4 and ORCA, two different quantum mechanical calculation packages.
+The project has two functionalities, giving two different approaches.
+The first one is the simulation of IR spectra using Psi4 and ORCA, two different quantum mechanical calculation packages.
 
 ## Theoretical Background of Infra-Red Spectroscopy
 QM Calculations:
@@ -23,11 +22,15 @@ This approach uses first principle quantum mechanics to simulate an IR spectrum,
 
 The vibrational frequencies are calculated by assuming the lowest harmonic energy potential. The Psi4 package then computes the Hessian matrix, which is diagonalized to obtain normal mode frquencies. The IR intensities are then computed by analytically calculating the change of the dipole moment in respect of the vibrational motion.
 
+## Stack 
 
-
-
-
-
+| Component     | Library                 |
+| ------------- | ----------------------- |
+| Molecular Input/Output | `PubChemPy`, `RDKit`    |
+| QM Engine     | `Psi4`                  |
+| Visualization | `py3Dmol`, `Matplotlib` |
+| Interface     | `Streamlit`             |
+| Math / Logic  | `NumPy`                 |
 
 
 ## 🔥 Usage
