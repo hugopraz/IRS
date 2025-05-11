@@ -21,6 +21,7 @@ This approach uses first principle quantum mechanics to simulate an IR spectrum,
 - Harmonic Approximation for Frequency Calculations
 
 The vibrational frequencies are calculated by assuming the lowest harmonic energy potential. The Psi4 package then computes the Hessian matrix, which is diagonalized to obtain normal mode frquencies. The IR intensities are then computed by analytically calculating the change of the dipole moment in respect of the vibrational motion.
+
 Strucural approach:
 This method relies on an empirical, rule-based approach to approximate IR spectra by identifying key molecular features through three distinct strategies. First, functional groups are detected using SMARTS-based substructure matching, enabling the recognition of characteristic moieties such as alcohols, ketones, and esters, each associated with specific IR absorption bands. Second, the classification of acyclic C–H bonds is performed by analyzing the hybridization state (sp³, sp², sp) of the carbon atom to which the hydrogen is attached, as these differences influence vibrational stretching frequencies. Finally, carbon–carbon bonding patterns, including single, double, and triple bonds, are counted to account for their respective spectral contributions. By combining these structural insights, the method constructs a composite IR spectrum that reflects the vibrational fingerprint of the molecule.
 ## Stack 
@@ -28,13 +29,11 @@ This method relies on an empirical, rule-based approach to approximate IR spectr
 | Component     | Library                 |
 | ------------- | ----------------------- |
 | Molecular Input/Output, Substructure Matching & Molecular Parsing | `PubChemPy`, `RDKit`    |
-| Data Handling | `pandas`, `collections` |
+| Data Handling | `collections` |
 | QM Engine     | `Psi4`                  |
 | Visualization | `py3Dmol`, `Matplotlib` |
 | Interface     | `Streamlit`             |
 | Math / Logic  | `NumPy`                 |
-
-## 
 
 ## 🔥 Usage
 
@@ -68,7 +67,6 @@ If you need jupyter lab, install it
 (irs) $ pip install jupyterlab
 ```
 
-
 ## 🛠️ Development installation
 
 Initialize Git (only for the first time). 
@@ -92,6 +90,35 @@ To install the package, run
 ```
 (irs) $ pip install -e ".[test,doc]"
 ```
+
+## 📚 Requirements
+The package runs on python 3.10 but supports python 3.9. However, it requires several other packages aswell.
+
+QM Approach: Psi4
+```bash
+rdkit (version 2022.9.5)
+Psi4
+Matplotlib
+NumPy
+```
+
+QM Approach: ORCA
+```bash
+
+```
+
+Sturctural Approach
+```bash
+rdkit (version 2022.9.5)
+collections
+```
+
+If the installation is succesfull, the packages mentionned above should all be installed automatically. However, this can be verified
+
+
+
+
+
 
 ### Run tests and coverage
 
