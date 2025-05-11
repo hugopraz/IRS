@@ -77,47 +77,6 @@ Install the package
 ```bash
 pip install -e
 ```
-## 👩‍💻 Installation
-
-Create a new environment, you may also give the environment a different name. 
-
-```
-conda create -n irs python=3.10 
-```
-
-```
-conda activate irs
-(conda_env) $ pip install .
-```
-
-If you need jupyter lab, install it 
-
-```
-(irs) $ pip install jupyterlab
-```
-
-## 🛠️ Development installation
-Pip install
-IRS can be installed using pip
-```bash
-pip install IRS
-```
-
-Github
-The package can also be installed from the GitHub repositroy via pip using the following command
-```bash
-pip install git+https://github.com/ryanschen0/IRS
-
-Git
-Clone the repository form github
-```bash
-git clone https://github.com/ryanschen0/IRS.git
-cd path/to/IRS
-
-Install the package
-```bash
-pip install -e
-```
 
 Initialize Git (only for the first time). 
 
@@ -146,7 +105,7 @@ The package runs on python 3.10 but supports python 3.9. However, it requires se
 
 QM Approach: Psi4
 ```bash
-rdkit (version 2022.9.5)
+rdkit (>= 2022.9.5)
 Psi4
 Matplotlib
 NumPy
@@ -165,7 +124,7 @@ This method also requires the installation of ORCA (>= 5.0.2).
 
 Sturctural Approach
 ```bash
-rdkit (version 2022.9.5)
+rdkit (>= 2022.9.5)
 collections
 ```
 
