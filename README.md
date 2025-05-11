@@ -36,7 +36,7 @@ This method relies on an empirical, rule-based approach to approximate IR spectr
 | Math / Logic  | `NumPy`                 |
 
 ## 🔥 Usage
-
+The core function of this package takes a molecule as input, provided as a SMILES string, IUPAC name, or structural drawing, and displays its corresponding infrared (IR) spectrum. This IR spectrum can be generated using  
 ```python
 from mypackage import main_func
 
@@ -68,6 +68,27 @@ If you need jupyter lab, install it
 ```
 
 ## 🛠️ Development installation
+Pip install
+IRS can be installed using pip
+```bash
+pip install IRS
+```
+
+Github
+The package can also be installed from the GitHub repositroy via pip using the following command
+```bash
+pip install git+https://github.com/ryanschen0/IRS
+
+Git
+Clone the repository form github
+```bash
+git clone https://github.com/ryanschen0/IRS.git
+cd path/to/IRS
+
+Install the package
+```bash
+pip install -e
+```
 
 Initialize Git (only for the first time). 
 
@@ -113,8 +134,14 @@ rdkit (version 2022.9.5)
 collections
 ```
 
-If the installation is succesfull, the packages mentionned above should all be installed automatically. However, this can be verified
+If the installation is succesfull, the packages mentionned above should all be installed automatically. However, this can be verified by checking if all have been installed in the desired environnement using the following commands:
 
+| Goal                                             | Command                      |
+|-----------------------------------------------|------------------------------|
+| Check if a specific package is installed      | `pip show IRS`       |
+| See a list of all installed packages          | `pip list`                   |
+| Search for a package in the list (Linux/macOS)| `pip list \| grep IRS`   |
+| Search for a package in the list (Windows)    | `pip list \| findstr IRS`   |
 
 
 
