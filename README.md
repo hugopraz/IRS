@@ -154,8 +154,14 @@ NumPy
 
 QM Approach: ORCA
 ```bash
-
+rdkit (>= 2022.09.1)
+numpy (>=1.21.0, <2.0.0)
+matplotlib (>=3.4.0)
+subprocess
+os
+sys
 ```
+This method also requires the installation of ORCA (>= 5.0.2).
 
 Sturctural Approach
 ```bash
