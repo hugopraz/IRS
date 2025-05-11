@@ -2,10 +2,13 @@ name: Run tests
 on:
   push:
     paths-ignore:
-      - 'README.md'
-      - '*.md'
+      - '**/*.md'
       - 'docs/**'
   pull_request:
+    paths-ignore:
+      - '**/*.md'
+      - 'docs/**'
+
 
 jobs:
   test:
