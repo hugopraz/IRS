@@ -5,57 +5,6 @@ import matplotlib.pyplot as plt
 import os
 from collections import Counter
 
-
-FUNCTIONAL_GROUPS = {
-    "Fluoroalkane": "[#6][F]",
-    "Chloroalkane": "[#6][Cl]",
-    "Bromoalkane": "[#6][Br]",
-    "Iodoalkane": "[#6][I]",
-    "Alcohol": "[OX2H][#6]",
-    "Ether": "[OD2]([#6])[#6]",
-    "Epoxide": "[#6]1[#6][OX2]1",
-    "Aldehyde": "[CX3H1](=O)[#6]",
-    "Ketone": "[#6][CX3](=O)[#6]",
-    "Carboxylic Acid": "[CX3](=O)[OX2H1]",
-    "Ester": "[#6][CX3](=O)[OX2H0][#6]",
-    "Lactone": "[CX3](=O)[OX2][#6]@[#6]",
-    "Acid Anhydride": "[#6][CX3](=O)[OX2][CX3](=O)[#6]",
-    "Acyl Halide": "[CX3](=O)[F,Cl,Br,I]",
-    "Peroxide": "[#6][OX2][OX2][#6]",
-    "Hydroperoxide": "[#6][OX2][OX2H]",
-    "Peracid": "[CX3](=O)[OX2][OX2H]",
-    "Ketone": "[#6]=[#8]",
-    "Amine (Primary)": "[NX3H2][#6]",
-    "Amine (Secondary)": "[NX3H1]([#6])[#6]",
-    "Amine (Tertiary)": "[NX3H0]([#6])([#6])[#6]",
-    "Amide": "[NX3][CX3](=O)[#6]",
-    "Lactam": "[#6]1[#6][#6][CX3](=O)[NX3]1",
-    "Imine": "[NX2]=[CX3]",
-    "Nitrile": "[NX1]#[CX2]",
-    "Isocyanate": "[NX2]=[CX2]=[OX1]",
-    "Hydrazine": "[N]-[N]",
-    "Azide": "N=[N+]=[N-]",
-    "Diazenyl": "[N]=[N]",
-    "Guanidine": "[NX3H1,NX3H2][CX3](=[NX2])[NX3H1,NX3H2]",
-    "N-Oxide (charged)": "[#6][N+]([O-])[#6]", 
-    "N-Oxide (acyclic)": "[N+]([O-])([#6])[#6]", 
-    "N-Oxide (nitroso)": "[#6][N]=[O]",
-    "N-Oxide (imine-ether)": "[#6]=[NX2][OX2][#6]",
-    "N-Oxide": "[NX2]=[O]",
-    "N-hydroxyl (imine)": "[#6]=[NX2][OX2H]",  
-    "N-hydroxyl (generic)": "[N][OH]",         
-    "N-hydroxyl (amine)": "[NX3][OX2H]",
-    "Nitroso": "[N+,NX1,NX2]=O",
-    "Pyridine": "n1ccccc1",
-    "Pyrrole": "[nH]1cccc1",
-    "Furan": "o1cccc1",
-    "Thiophene": "s1cccc1",
-    "Quinone": "O=C1C=CC(=O)C=C1",
-    "Azo": "[#6][NX2]=[NX2][#6]",
-    "Isocyanide": "[C-]#[N+]",
-    "Isocyanide": "[N]#[C-]"
-}
-
 def get_functional_groups(smiles):
     
     mol = Chem.MolFromSmiles(smiles)
@@ -83,7 +32,6 @@ def get_functional_groups(smiles):
                 fg_counts[fg_name] += len(matches)
     
     return {k: v for k, v in fg_counts.items() if v > 0}
-
 
 def detect_main_functional_groups(smiles: str) -> dict:
     fg_counts= get_functional_groups(smiles)
@@ -160,8 +108,6 @@ def detect_main_functional_groups(smiles: str) -> dict:
     
     return {k: v for k, v in d.items() if v > 0}
 
-from rdkit import Chem
-
 def count_ch_bonds(smiles):
     mol = Chem.MolFromSmiles(smiles)
     mol = Chem.AddHs(mol)
@@ -192,7 +138,6 @@ def count_ch_bonds(smiles):
         "sp² C-H": sp2_ch,
         "sp C-H": sp_ch
     }
-
 
 def count_carbon_bonds(smiles):
     mol = Chem.MolFromSmiles(smiles)
@@ -237,8 +182,6 @@ def analyze_molecule(smiles: str) -> dict:
 
     return combined
 
-
-
 """"
 #Option 1
 import json
@@ -260,10 +203,6 @@ print("Available attributes in dictionnary:", dir(dictionnary))
 FUNCTIONAL_GROUPS_IR = dictionnary.FUNCTIONAL_GROUPS_IR
 components = ["Isocyanide", "Isocyanide"]
 """
-
-import numpy as np
-import matplotlib.pyplot as plt
-from collections import Counter
 
 def gaussian(x, center, intensity, width):
     """Generate a single Gaussian peak."""
