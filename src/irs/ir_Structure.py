@@ -12,7 +12,6 @@ FUNCTIONAL_GROUPS = {
     "Bromoalkane": "[#6][Br]",
     "Iodoalkane": "[#6][I]",
     "Alcohol": "[OX2H][#6]",
-    "Phenol": "[OX2H][a]",
     "Ether": "[OD2]([#6])[#6]",
     "Epoxide": "[#6]1[#6][OX2]1",
     "Aldehyde": "[CX3H1](=O)[#6]",
@@ -53,17 +52,6 @@ FUNCTIONAL_GROUPS = {
     "Thiophene": "s1cccc1",
     "Quinone": "O=C1C=CC(=O)C=C1",
     "Azo": "[#6][NX2]=[NX2][#6]",
-    "Cyclopropane": "C1CC1",
-    "Cyclobutane": "C1CCC1",
-    "Cyclopentane": "C1CCCC1",
-    "Cyclohexane": "C1CCCCC1",
-    "Cyclohexene": "C1=CCCCC1",
-    "Cyclohexadiene": "C1=CC=CCC1",
-    "Benzene": "c1ccccc1",
-    "Naphthalene": "c12ccccc1cccc2",
-    "Anthracene": "c1ccc2cc3ccccc3cc2c1",
-    "Phenanthrene": "c1ccc2c(c1)ccc3ccccc23",
-    "Indole": "n1ccc2ccccc12",
     "Isocyanide": "[C-]#[N+]",
     "Isocyanide": "[N]#[C-]"
 }
@@ -85,7 +73,7 @@ def get_functional_groups(smiles):
             
         matches = mol.GetSubstructMatches(pattern)
         if matches:
-            if fg_name in {"Benzene", "Naphthalene", "Pyridine"}:
+            if fg_name in {"Pyridine"}:
                 for match in matches:
                     atoms = frozenset(match)
                     if atoms not in arene_matches:
@@ -97,8 +85,9 @@ def get_functional_groups(smiles):
     return {k: v for k, v in fg_counts.items() if v > 0}
 
 
-def detect_main_functional_groups(fg_counts: dict, smiles: str) -> dict:
-    
+def detect_main_functional_groups(smiles: str) -> dict:
+    fg_counts= get_functional_groups(smiles)
+
     d = fg_counts.copy() 
 
     if "Naphthalene" in d:
@@ -171,27 +160,25 @@ def detect_main_functional_groups(fg_counts: dict, smiles: str) -> dict:
     
     return {k: v for k, v in d.items() if v > 0}
 
+from rdkit import Chem
+
 def count_ch_bonds(smiles):
     mol = Chem.MolFromSmiles(smiles)
-    if mol is None:
-        raise ValueError("Invalid SMILES string.")
-    
     mol = Chem.AddHs(mol)
 
-    
     sp3_ch = sp2_ch = sp_ch = 0
-    
+
     for atom in mol.GetAtoms():
-        if atom.GetSymbol() == 'C' and not atom.IsInRing():
-            h_count = sum(1 for neighbor in atom.GetNeighbors() 
-                         if neighbor.GetSymbol() == 'H')
-            
-            has_triple = any(bond.GetBondType() == Chem.BondType.TRIPLE 
-                            for bond in atom.GetBonds())
+        if atom.GetSymbol() == 'C':
+            h_count = sum(1 for neighbor in atom.GetNeighbors()
+                          if neighbor.GetSymbol() == 'H')
+
+            has_triple = any(bond.GetBondType() == Chem.BondType.TRIPLE
+                             for bond in atom.GetBonds())
             if has_triple:
                 sp_ch += h_count
                 continue
-                
+
             hybridization = atom.GetHybridization()
             if hybridization == Chem.HybridizationType.SP3:
                 sp3_ch += h_count
@@ -199,38 +186,38 @@ def count_ch_bonds(smiles):
                 sp2_ch += h_count
             elif hybridization == Chem.HybridizationType.SP:
                 sp_ch += h_count
-    
+
     return {
         "sp³ C-H": sp3_ch,
         "sp² C-H": sp2_ch,
         "sp C-H": sp_ch
     }
 
+
 def count_carbon_bonds(smiles):
-    
     mol = Chem.MolFromSmiles(smiles)
-    if mol is None:
-        raise ValueError("Invalid SMILES string.")
     
     cc_single = 0
     cc_double = 0
     cc_triple = 0
-    
+
     for bond in mol.GetBonds():
         atom1 = bond.GetBeginAtom()
         atom2 = bond.GetEndAtom()
-        
-        # Only consider C-C bonds
+
         if atom1.GetSymbol() == 'C' and atom2.GetSymbol() == 'C':
-            bond_type = bond.GetBondType()
-            
-            if bond_type == Chem.BondType.SINGLE:
-                cc_single += 1
-            elif bond_type == Chem.BondType.DOUBLE:
+            if bond.GetIsAromatic():
+                # Treat all aromatic C–C bonds as double
                 cc_double += 1
-            elif bond_type == Chem.BondType.TRIPLE:
-                cc_triple += 1
-    
+            else:
+                bond_type = bond.GetBondType()
+                if bond_type == Chem.BondType.SINGLE:
+                    cc_single += 1
+                elif bond_type == Chem.BondType.DOUBLE:
+                    cc_double += 1
+                elif bond_type == Chem.BondType.TRIPLE:
+                    cc_triple += 1
+
     return {
         "C-C (single)": cc_single,
         "C=C (double)": cc_double,
@@ -321,38 +308,3 @@ def build_and_plot_ir_spectrum(FUNCTIONAL_GROUPS_IR: dict, components: dict, com
     plt.show()
 
     return common_axis, transmittance
-
-build_and_plot_ir_spectrum({
-
-"C=C (double)": {
-    "frequencies": [1600, 1680],
-    "intensities": [35],
-    "widths": [25]
-},
-
-"C≡C (triple)": {
-    "frequencies": [2100, 2260],
-    "intensities": [12.5],
-    "widths": [25]
-},  "Phenol": {
-        "frequencies": [3200, 3600],
-        "intensities": [75],
-        "widths": [65]
-    },
-    "Alcohol": {
-        "frequencies": [3200, 3600],
-        "intensities": [75],
-        "widths": [65]
-    },
-    "Benzene": {
-        "frequencies": [3000, 3100],
-        "intensities": [35],
-        "widths": [10]
-    },
-    "sp² C-H": {
-    "frequencies": [3010, 3100],  # Alkene C-H
-    "intensities": [35],
-    "widths": [25]
-}
-}
-, {"C=C (double)": 3, "C≡C (triple)": 0 , "Phenol": 0,"Benzene": 0 , "Alcohol": 0, "sp² C-H": 6})

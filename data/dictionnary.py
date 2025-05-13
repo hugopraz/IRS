@@ -5,11 +5,6 @@ FUNCTIONAL_GROUPS_IR= {
         "widths": [10]
     },
     
-    "Phenol": {
-        "frequencies": [3200, 3600],
-        "intensities": [75],
-        "widths": [65]
-    },
     "Ether": {
         "frequencies": [1050, 1150],
         "intensities": [35],
@@ -205,61 +200,7 @@ FUNCTIONAL_GROUPS_IR= {
         "intensities": [35],
         "widths": [10]
     },
-    "Cyclopropane": {
-        "frequencies": [2800, 3000],
-        "intensities": [35],
-        "widths": [10]
-    },
-    "Cyclobutane": {
-        "frequencies": [2800, 3000],
-        "intensities": [35],
-        "widths": [10]
-    },
-    "Cyclopentane": {
-        "frequencies": [2800, 3000],
-        "intensities": [35],
-        "widths": [10]
-    },
-    "Cyclohexane": {
-        "frequencies": [2800, 3000],
-        "intensities": [35],
-        "widths": [10]
-    },
-    "Cyclohexene": {
-        "frequencies": [3000, 3100],
-        "intensities": [35],
-        "widths": [10]
-    },
-    "Cyclohexadiene": {
-        "frequencies": [3000, 3100],
-        "intensities": [35],
-        "widths": [10]
-    },
-    "Benzene": {
-        "frequencies": [3000, 3100],
-        "intensities": [35],
-        "widths": [10]
-    },
-    "Naphthalene": {
-        "frequencies": [3000, 3100],
-        "intensities": [35],
-        "widths": [10]
-    },
-    "Anthracene": {
-        "frequencies": [3000, 3100],
-        "intensities": [35],
-        "widths": [10]
-    },
-    "Phenanthrene": {
-        "frequencies": [3000, 3100],
-        "intensities": [35],
-        "widths": [10]
-    },
-    "Indole": {
-        "frequencies": [3000, 3100],
-        "intensities": [35],
-        "widths": [10]
-    }, 
+    
     # --- C–H stretching regions ---
 
 "sp³ C-H": {
