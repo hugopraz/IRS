@@ -4,11 +4,7 @@ FUNCTIONAL_GROUPS_IR= {
         "intensities": [35],
         "widths": [10]
     },
-    "Alcohol": {
-        "frequencies": [3200, 3600],
-        "intensities": [75],
-        "widths": [65]
-    },
+    
     "Phenol": {
         "frequencies": [3200, 3600],
         "intensities": [75],

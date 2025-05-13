@@ -251,40 +251,8 @@ def analyze_molecule(smiles: str) -> dict:
     return combined
 
 
-#Gaussian and Spectrum Functions similar to ones in ir_ORCA
 
-def gaussian(x, center, intensity, sigma):
-    return intensity * np.exp(-((x - center) ** 2) / (2 * sigma ** 2))
-
-def reconstruct_spectrum(x, peaks):
-    y = np.zeros_like(x)
-    for center, intensity, sigma in peaks:
-        y += gaussian(x, center, intensity, sigma)
-    return y
-
-#Combine values in an IR spectrum with transimttance and multiply multiple functional groups
-def combine_spectra_from_peaks(spectra_dict, component_list, common_axis=None):
-    if common_axis is None:
-        common_axis = np.linspace(400, 4000, 5000)
-
-    combined_absorbance = np.zeros_like(common_axis)
-
-    counts = Counter(component_list)
-
-    for name, count in counts.items():
-        peaks = spectra_dict.get(name)
-        if peaks:
-            scaled_peaks = [(center, intensity * count, sigma) for center, intensity, sigma in peaks]
-            combined_absorbance += reconstruct_spectrum(common_axis, scaled_peaks)
-
-    max_absorbance = np.max(combined_absorbance)
-    if max_absorbance > 0:
-        combined_absorbance /= max_absorbance
-    transmittance = 1 - combined_absorbance
-
-    return common_axis, transmittance
-
-
+""""
 #Option 1
 import json
 with open("../data/functional_groups_ir.json") as f:
@@ -304,27 +272,87 @@ spec.loader.exec_module(dictionnary)
 print("Available attributes in dictionnary:", dir(dictionnary)) 
 FUNCTIONAL_GROUPS_IR = dictionnary.FUNCTIONAL_GROUPS_IR
 components = ["Isocyanide", "Isocyanide"]
+"""
 
-#Generate and Zoom 
-x, transmittance = combine_spectra_from_peaks(FUNCTIONAL_GROUPS_IR, components)
+import numpy as np
+import matplotlib.pyplot as plt
+from collections import Counter
 
-# Determine zoom range from actual centers
-all_centers = [center for comp in components for center, *_ in FUNCTIONAL_GROUPS_IR.get(comp, [])]
-if all_centers:
-    xmin = max(400, min(all_centers) - 150)
-    xmax = min(4000, max(all_centers) + 150)
-else:
-    xmin, xmax = 400, 4000  # fallback range
+def gaussian(x, center, intensity, width):
+    """Generate a single Gaussian peak."""
+    return intensity * np.exp(-((x - center) ** 2) / (2 * width ** 2))
 
-# Plots
-plt.figure(figsize=(10, 6))
-plt.plot(x, transmittance, color='black', label="Combined Spectrum")
-plt.xlim(xmax, xmin) 
-plt.ylim(1.05, 0)    
-plt.title("Combined IR Spectrum")
-plt.xlabel("Wavenumber (cm⁻¹)")
-plt.ylabel("Transmittance (normalized)")
-plt.grid(True)
-plt.legend()
-plt.tight_layout()
-plt.show()
+def reconstruct_spectrum(x_axis, peaks):
+    """Sum multiple Gaussian peaks."""
+    y = np.zeros_like(x_axis)
+    for center, intensity, width in peaks:
+        y += gaussian(x_axis, center, intensity, width)
+    return y
+
+def build_and_plot_ir_spectrum(FUNCTIONAL_GROUPS_IR: dict, components: dict, common_axis=None):
+    if common_axis is None:
+        common_axis = np.linspace(400, 4000, 5000)
+
+    combined_peaks = []
+
+    for group_name, count in components.items():
+        group_data = FUNCTIONAL_GROUPS_IR.get(group_name)
+        if group_data:
+            freqs = group_data["frequencies"]
+            intensities = group_data["intensities"]
+            widths = group_data["widths"]
+
+            for f, i, w in zip(freqs, intensities, widths):
+                combined_peaks.append((f, i * count, w))
+
+    absorbance = reconstruct_spectrum(common_axis, combined_peaks)
+    absorbance /= np.max(absorbance) if np.max(absorbance) > 0 else 1
+    transmittance = 1 - absorbance
+
+    plt.figure(figsize=(8, 4))
+    plt.plot(common_axis, -absorbance, label="Simulated IR Spectrum")
+    plt.xlabel("Wavenumber (cm⁻¹)")
+    plt.ylabel("Relative Absorbance (a.u.)")
+    plt.title("Simulated IR Spectrum from Functional Groups")
+    plt.gca().invert_xaxis()
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
+
+    return common_axis, transmittance
+
+build_and_plot_ir_spectrum({
+
+"C=C (double)": {
+    "frequencies": [1600, 1680],
+    "intensities": [35],
+    "widths": [25]
+},
+
+"C≡C (triple)": {
+    "frequencies": [2100, 2260],
+    "intensities": [12.5],
+    "widths": [25]
+},  "Phenol": {
+        "frequencies": [3200, 3600],
+        "intensities": [75],
+        "widths": [65]
+    },
+    "Alcohol": {
+        "frequencies": [3200, 3600],
+        "intensities": [75],
+        "widths": [65]
+    },
+    "Benzene": {
+        "frequencies": [3000, 3100],
+        "intensities": [35],
+        "widths": [10]
+    },
+    "sp² C-H": {
+    "frequencies": [3010, 3100],  # Alkene C-H
+    "intensities": [35],
+    "widths": [25]
+}
+}
+, {"C=C (double)": 3, "C≡C (triple)": 0 , "Phenol": 0,"Benzene": 0 , "Alcohol": 0, "sp² C-H": 6})
