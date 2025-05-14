@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import os
 from collections import Counter
 
-def get_functional_groups(smiles):
+def get_functional_groups(FUNCTIONAL_GROUPS_IR: dict, smiles):
     
     mol = Chem.MolFromSmiles(smiles)
     if mol is None:
@@ -63,23 +63,6 @@ def detect_main_functional_groups(smiles: str) -> dict:
         for group in ["Amide", "Amine (Secondary)", "Ketone"]:
             if group in d:
                 d[group] = max(0, d[group] - d["Lactam"])
-    if "Peracid" in d:
-        for group in ["Hydroperoxide", "Ketone"]:
-            if group in d:
-                d[group] = max(0, d[group] - d["Peracid"])
-    if "Acyl Halide" in d:
-        acyl_halide_count = d["Acyl Halide"]
-        acyl_halide_substituents = {
-            "Fluoroalkane": "R-CO-F",  
-            "Chloroalkane": "R-CO-Cl",
-            "Bromoalkane": "R-CO-Br",  
-            "Iodoalkane": "R-CO-I"    
-        }
-        for haloalkane, acyl_type in acyl_halide_substituents.items():
-            if haloalkane in d:
-                d[haloalkane] = max(0, d[haloalkane] - acyl_halide_count)
-        if "Ketone" in d.keys():
-            d["Ketone"] = max(0, d["Ketone"] - d["Acyl Halide"])
     if "Acid Anhydride" in d:
         if "Ether" in d:
             d["Ether"] = max(0, d["Ether"] - d["Acid Anhydride"])
@@ -87,10 +70,6 @@ def detect_main_functional_groups(smiles: str) -> dict:
             d["Ester"] = max(0, d["Ester"] - 2 * d["Acid Anhydride"])
         if "Ketone" in d:
             d["Ketone"] = max(0, d["Ketone"] - 2 * d["Acid Anhydride"])
-    if "Lactone" in d:
-        for group in ["Ester", "Ketone", "Ether"]:
-            if group in d:
-                d[group] = max(0, d[group] - d["Lactone"])
     if "Ester" in d:
         for group in ["Ether", "Ketone"]:
             if group in d:
@@ -139,23 +118,24 @@ def count_ch_bonds(smiles):
         "sp C-H": sp_ch
     }
 
-def count_carbon_bonds(smiles):
+def count_carbon_bonds_and_cn(smiles):
     mol = Chem.MolFromSmiles(smiles)
-    
+
     cc_single = 0
     cc_double = 0
     cc_triple = 0
+    cn_single = 0
 
     for bond in mol.GetBonds():
         atom1 = bond.GetBeginAtom()
         atom2 = bond.GetEndAtom()
+        bond_type = bond.GetBondType()
 
+        # C–C bonds
         if atom1.GetSymbol() == 'C' and atom2.GetSymbol() == 'C':
             if bond.GetIsAromatic():
-                # Treat all aromatic C–C bonds as double
-                cc_double += 1
+                cc_double += 1  # Treat aromatic C–C bonds as double
             else:
-                bond_type = bond.GetBondType()
                 if bond_type == Chem.BondType.SINGLE:
                     cc_single += 1
                 elif bond_type == Chem.BondType.DOUBLE:
@@ -163,17 +143,23 @@ def count_carbon_bonds(smiles):
                 elif bond_type == Chem.BondType.TRIPLE:
                     cc_triple += 1
 
+        # C–N single bonds
+        elif ((atom1.GetSymbol() == 'C' and atom2.GetSymbol() == 'N') or
+              (atom1.GetSymbol() == 'N' and atom2.GetSymbol() == 'C')) and bond_type == Chem.BondType.SINGLE:
+            cn_single += 1
+
     return {
-        "C-C (single)": cc_single,
+        "C–C (single)": cc_single,
         "C=C (double)": cc_double,
-        "C≡C (triple)": cc_triple
+        "C≡C (triple)": cc_triple,
+        "C–N (single)": cn_single
     }
 
 def analyze_molecule(smiles: str) -> dict:
     fg = get_functional_groups(smiles)
     fg_main = detect_main_functional_groups(fg, smiles)
     ch_counts = count_ch_bonds(smiles)
-    cc_bond_counts = count_carbon_bonds(smiles)
+    cc_bond_counts = count_carbon_bonds_and_cn(smiles)
 
     combined = {}
     combined.update(fg_main)
