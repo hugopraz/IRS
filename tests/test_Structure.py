@@ -5,7 +5,6 @@ import numpy as np
 from irs.ir_structure import (
     gaussian,
     reconstruct_spectrum,
-    combine_spectra_from_peaks
 )
 
 # Test data constants
@@ -52,7 +51,7 @@ class TestIRStructureFunctions(unittest.TestCase):
         self.assertTrue(np.all(result == 0))
 
     # --- Spectrum Combination Tests ---
-
+    """"
     # Tests combination of spectra with duplicate components
     def test_combine_spectra_from_peaks(self):
         components = ["Isocyanide", "Isocyanide"]
@@ -75,7 +74,7 @@ class TestIRStructureFunctions(unittest.TestCase):
         custom_x = np.linspace(500, 3000, 100)
         x, _ = combine_spectra_from_peaks(SAMPLE_SPECTRA, ["Isocyanide"], custom_x)
         self.assertTrue(np.array_equal(x, custom_x))
-
+    """
     # --- Property-Based Tests ---
 
     # Tests Gaussian intensity scaling with different input values

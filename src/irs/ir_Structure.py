@@ -281,5 +281,4 @@ def build_and_plot_ir_spectrum(FUNCTIONAL_GROUPS_IR: dict, components: dict, com
     plt.show()
 
     return common_axis, transmittance
-
 print(build_and_plot_ir_spectrum(functional_groups_ir, {"Hydroperoxide": 3}))
