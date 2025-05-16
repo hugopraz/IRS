@@ -42,6 +42,7 @@ for compound, props in functional_groups_ir.items():
 
 df = pd.DataFrame(flat_data)
 
+#Checks if the smiles is the right one for this code 
 def validate_smiles(smiles: str):
     allowed_atoms = {"I", "F", "Cl", "Br", "N", "O", "H", "C"}
 
@@ -70,6 +71,7 @@ def validate_smiles(smiles: str):
 
     return True
 
+#Finds all the structural groups in the molecule
 def get_functional_groups(FUNCTIONAL_GROUPS: dict, smiles):
     
     mol = Chem.MolFromSmiles(smiles)
@@ -85,7 +87,7 @@ def get_functional_groups(FUNCTIONAL_GROUPS: dict, smiles):
             
         matches = mol.GetSubstructMatches(pattern)
         if matches:
-            if fg_name in {"Pyridine"}:
+            if fg_name in {"Pyridine", "Pyrrole", "Furan", "Quinone"}:
                 for match in matches:
                     atoms = frozenset(match)
                     if atoms not in arene_matches:
@@ -96,6 +98,7 @@ def get_functional_groups(FUNCTIONAL_GROUPS: dict, smiles):
     
     return {k: v for k, v in fg_counts.items() if v > 0}
 
+#Removes redundant functional groups from the output of the get_functional_groups funtion
 def detect_main_functional_groups(smiles: str) -> dict:
     fg_counts= get_functional_groups(FUNCTIONAL_GROUPS, smiles)
 
@@ -150,6 +153,7 @@ def detect_main_functional_groups(smiles: str) -> dict:
     
     return {k: v for k, v in d.items() if v > 0}
 
+#Counts the different types of C-H bonds
 def count_ch_bonds(smiles):
     mol = Chem.MolFromSmiles(smiles)
     mol = Chem.AddHs(mol)
@@ -181,6 +185,7 @@ def count_ch_bonds(smiles):
         "sp C-H": sp_ch
     }
 
+#Counts the different types of C-C bonds and the number of single C-N bonds
 def count_carbon_bonds_and_cn(smiles):
     mol = Chem.MolFromSmiles(smiles)
 
@@ -216,6 +221,7 @@ def count_carbon_bonds_and_cn(smiles):
         "C–N (single)": cn_single
     }
 
+#Regroups all the information together into one dictionnary
 def analyze_molecule(smiles: str) -> dict:
     validate_smiles(smiles)
     fg = get_functional_groups(FUNCTIONAL_GROUPS, smiles)
