@@ -4,10 +4,23 @@ from rdkit import Chem
 from rdkit.Chem import AllChem
 import matplotlib.pyplot as plt
 import os 
-import numpy as np 
+import numpy as np
+import os
+from dotenv import load_dotenv
+from pathlib import Path
 
-ORCA_PATH = r"C:\Users\hugop\OneDrive\Bureau\ORCa\orca.exe"
-OUTPUT_BASE_DIR = r"C:\Users\hugop\ORCA_runs"
+# Load .env file from absolute path
+env_path = Path(__file__).parent.parent.parent / "setup" / "orca.env"
+load_dotenv(dotenv_path=env_path, override=True)
+
+# Convert paths to raw Windows format and resolve them
+ORCA_PATH = Path(os.getenv("ORCA_PATH").strip('"').replace('/', '\\')).resolve()
+OUTPUT_BASE_DIR = Path(os.getenv("OUTPUT_BASE_DIR").strip('"').replace('/', '\\')).resolve()
+
+# Verify paths exist
+if not ORCA_PATH.exists():
+    raise FileNotFoundError(f"❌ ORCA executable not found at: {ORCA_PATH}")
+OUTPUT_BASE_DIR.mkdir(parents=True, exist_ok=True)
 
 # Convert a SMILES string into a 3D-optimized RDKit molecule (pre-optimisation)
 def generate_3d_from_smiles(smiles: str):
@@ -52,7 +65,7 @@ def write_orca_input(mol, base_name: str, charge: int, multiplicity: int):
     os.makedirs(OUTPUT_BASE_DIR, exist_ok=True)
     inp_path = os.path.join(OUTPUT_BASE_DIR, base_name + ".inp")
     conf = mol.GetConformer()
-    with open(inp_path, 'w', newline='') as f:
+    with open(inp_path, 'w', newline='\n') as f:
         f.write("! B3LYP def2-SVP Opt Freq\n")
         f.write(f"* xyz {charge} {multiplicity}\n")
         for atom in mol.GetAtoms():
@@ -68,30 +81,23 @@ def write_orca_input(mol, base_name: str, charge: int, multiplicity: int):
 
 # Launch an ORCA job and matches the output to a file
 def run_orca(inp_path: str):
-    input_filename = os.path.basename(inp_path)
-    base_name = os.path.splitext(input_filename)[0]
-    output_path = os.path.join(OUTPUT_BASE_DIR, base_name + ".out")
-
-    print("Running ORCA... (this may take some time)")
-
+    inp_path = Path(inp_path).resolve()
+    output_path = OUTPUT_BASE_DIR / f"{inp_path.stem}.out"
     try:
-        with open(output_path, "w") as out_file:
+        with open(output_path, 'w') as out_file:
             subprocess.run(
-                [ORCA_PATH, input_filename],
-                cwd=OUTPUT_BASE_DIR,
+                [str(ORCA_PATH), str(inp_path)],
+                cwd=str(OUTPUT_BASE_DIR),
                 stdout=out_file,
-                stderr=subprocess.STDOUT,
-                check=True
+                stderr=subprocess.PIPE,
+                check=True,
+                shell=True,  
+                text=True
             )
-    except subprocess.CalledProcessError:
-        print("ERROR: ORCA execution failed.")
+        return output_path
+    except subprocess.CalledProcessError as e:
+        print(f"❌ ORCA failed with error: {e.stderr}")
         return None
-
-    if not os.path.exists(output_path):
-        print(f"ERROR: ORCA output file not found: {output_path}")
-        return None
-
-    return output_path
 # Input: Path to .inp file
 # Output: Path to .out file, or None if failed
 # - Calls ORCA using subprocess with cwd set to output dir
@@ -231,7 +237,7 @@ def plot_ir_spectrum(wavenumbers, intensities, widths=None, resolution=2, scale_
     for wn, inten in zip(scaled_wavenumbers, rel_intensities):
         plt.axvline(x=wn, ymin=0, ymax=inten, color='gray', alpha=0.3, linewidth=0.5)
 
-    plt.title("Simulated IR Spectrum (Transmittance-style)")
+    plt.title("Simulated IR Spectrum (ORCA-based)")
     plt.xlabel("Wavenumber (cm$^{-1}$)")
     plt.ylabel("Relative Absorbance (a.u.)")
     plt.gca().invert_xaxis()

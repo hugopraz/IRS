@@ -1,0 +1,299 @@
+{
+    "Haloalkane": {
+        "frequencies": [540, 760],
+        "intensities": [35],
+        "widths": [10]
+    },
+    
+    "Phenol": {
+        "frequencies": [3200, 3600],
+        "intensities": [75],
+        "widths": [65]
+    },
+    "Ether": {
+        "frequencies": [1050, 1150],
+        "intensities": [35],
+        "widths": [10]
+    },
+    "Epoxide": {
+        "frequencies": [800, 950],
+        "intensities": [35],
+        "widths": [10]
+    },
+    "Aldehyde": {
+        "frequencies": [1720, 1740],
+        "intensities": [75],
+        "widths": [10]
+    },
+    "Ketone": {
+        "frequencies": [1705, 1725],
+        "intensities": [75],
+        "widths": [10]
+    },
+    "Carboxylic Acid": {
+        "frequencies": [1700, 1725],
+        "intensities": [75],
+        "widths": [65]
+    },
+    "Ester": {
+        "frequencies": [1735, 1750],
+        "intensities": [75],
+        "widths": [10]
+    },
+    "Lactone": {
+        "frequencies": [1735, 1750],
+        "intensities": [75],
+        "widths": [10]
+    },
+    "Acid Anhydride": {
+        "frequencies": [1740, 1820],
+        "intensities": [75],
+        "widths": [10]
+    },
+    "Acyl Halide": {
+        "frequencies": [1785, 1815],
+        "intensities": [75],
+        "widths": [10]
+    },
+    "Peroxide": {
+        "frequencies": [800, 950],
+        "intensities": [35],
+        "widths": [10]
+    },
+    "Hydroperoxide": {
+        "frequencies": [3200, 3600],
+        "intensities": [75],
+        "widths": [65]
+    },
+    "Peracid": {
+        "frequencies": [1700, 1725],
+        "intensities": [75],
+        "widths": [65]
+    },
+    "Amine (Primary)": {
+        "frequencies": [3300, 3500],
+        "intensities": [35],
+        "widths": [10]
+    },
+    "Amine (Secondary)": {
+        "frequencies": [3300, 3500],
+        "intensities": [35],
+        "widths": [10]
+    },
+    "Amine (Tertiary)": {
+        "frequencies": [3300, 3500],
+        "intensities": [12.5],
+        "widths": [10]
+    },
+    "Amide": {
+        "frequencies": [1640, 1690],
+        "intensities": [75],
+        "widths": [10]
+    },
+    "Lactam": {
+        "frequencies": [1640, 1690],
+        "intensities": [75],
+        "widths": [10]
+    },
+    "Imine": {
+        "frequencies": [1640, 1690],
+        "intensities": [35],
+        "widths": [10]
+    },
+    "Nitrile": {
+        "frequencies": [2210, 2260],
+        "intensities": [35],
+        "widths": [10]
+    },
+    "Isocyanate": {
+        "frequencies": [2250, 2275],
+        "intensities": [75],
+        "widths": [10]
+    },
+    "Hydrazine": {
+        "frequencies": [3300, 3500],
+        "intensities": [35],
+        "widths": [10]
+    },
+    "Azide": {
+        "frequencies": [2100, 2160],
+        "intensities": [75],
+        "widths": [10]
+    },
+    "Diazenyl": {
+        "frequencies": [2100, 2160],
+        "intensities": [75],
+        "widths": [10]
+    },
+    "Guanidine": {
+        "frequencies": [1640, 1690],
+        "intensities": [35],
+        "widths": [10]
+    },
+    "N-Oxide (charged)": {
+        "frequencies": [1000, 1300],
+        "intensities": [35],
+        "widths": [10]
+    },
+    "N-Oxide (acyclic)": {
+        "frequencies": [1000, 1300],
+        "intensities": [35],
+        "widths": [10]
+    },
+    "N-Oxide (nitroso)": {
+        "frequencies": [1000, 1300],
+        "intensities": [35],
+        "widths": [10]
+    },
+    "N-Oxide (imine-ether)": {
+        "frequencies": [1000, 1300],
+        "intensities": [35],
+        "widths": [10]
+    },
+    "N-Oxide": {
+        "frequencies": [1000, 1300],
+        "intensities": [35],
+        "widths": [10]
+    },
+    "N-hydroxyl (imine)": {
+        "frequencies": [3200, 3600],
+        "intensities": [75],
+        "widths": [65]
+    },
+    "N-hydroxyl (generic)": {
+        "frequencies": [3200, 3600],
+        "intensities": [75],
+        "widths": [65]
+    },
+    "N-hydroxyl (amine)": {
+        "frequencies": [3200, 3600],
+        "intensities": [75],
+        "widths": [65]
+    },
+    "Nitroso": {
+        "frequencies": [1500, 1600],
+        "intensities": [35],
+        "widths": [10]
+    },
+    "Pyridine": {
+        "frequencies": [1500, 1600],
+        "intensities": [35],
+        "widths": [10]
+    },
+    "Pyrrole": {
+        "frequencies": [1500, 1600],
+        "intensities": [35],
+        "widths": [10]
+    },
+    "Furan": {
+        "frequencies": [1500, 1600],
+        "intensities": [35],
+        "widths": [10]
+    },
+    "Thiophene": {
+        "frequencies": [1500, 1600],
+        "intensities": [35],
+        "widths": [10]
+    },
+    "Quinone": {
+        "frequencies": [1650, 1750],
+        "intensities": [75],
+        "widths": [10]
+    },
+    "Azo": {
+        "frequencies": [1500, 1600],
+        "intensities": [35],
+        "widths": [10]
+    },
+    "Cyclopropane": {
+        "frequencies": [2800, 3000],
+        "intensities": [35],
+        "widths": [10]
+    },
+    "Cyclobutane": {
+        "frequencies": [2800, 3000],
+        "intensities": [35],
+        "widths": [10]
+    },
+    "Cyclopentane": {
+        "frequencies": [2800, 3000],
+        "intensities": [35],
+        "widths": [10]
+    },
+    "Cyclohexane": {
+        "frequencies": [2800, 3000],
+        "intensities": [35],
+        "widths": [10]
+    },
+    "Cyclohexene": {
+        "frequencies": [3000, 3100],
+        "intensities": [35],
+        "widths": [10]
+    },
+    "Cyclohexadiene": {
+        "frequencies": [3000, 3100],
+        "intensities": [35],
+        "widths": [10]
+    },
+    "Benzene": {
+        "frequencies": [3000, 3100],
+        "intensities": [35],
+        "widths": [10]
+    },
+    "Naphthalene": {
+        "frequencies": [3000, 3100],
+        "intensities": [35],
+        "widths": [10]
+    },
+    "Anthracene": {
+        "frequencies": [3000, 3100],
+        "intensities": [35],
+        "widths": [10]
+    },
+    "Phenanthrene": {
+        "frequencies": [3000, 3100],
+        "intensities": [35],
+        "widths": [10]
+    },
+    "Indole": {
+        "frequencies": [3000, 3100],
+        "intensities": [35],
+        "widths": [10]
+    }, 
+
+"sp³ C-H": {
+    "frequencies": [2850, 2960],  
+    "intensities": [35],
+    "widths": [25]
+},
+
+"sp² C-H": {
+    "frequencies": [3010, 3100],  
+    "intensities": [35],
+    "widths": [25]
+},
+
+"sp C-H": {
+    "frequencies": [3300],  
+    "intensities": [35],
+    "widths": [25]
+},
+
+"C-C (single)": {
+    "frequencies": [800, 1300],
+    "intensities": [12.5],
+    "widths": [25]
+},
+
+"C=C (double)": {
+    "frequencies": [1600, 1680],
+    "intensities": [35],
+    "widths": [25]
+},
+
+"C≡C (triple)": {
+    "frequencies": [2100, 2260],
+    "intensities": [12.5],
+    "widths": [25]
+}
+}

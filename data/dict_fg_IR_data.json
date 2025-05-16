@@ -1,4 +1,4 @@
-FUNCTIONAL_GROUPS_IR= {
+{
     "Chloroalkane": {
         "frequencies": [662.5],
         "intensities": [35],
@@ -174,27 +174,23 @@ FUNCTIONAL_GROUPS_IR= {
         "intensities": [75],
         "widths": [10]
     },
-    # --- C–H stretching regions ---
-
 "sp³ C-H": {
-    "frequencies": [2850, 2960],  # Alkane C-H
+    "frequencies": [2850, 2960],  
     "intensities": [35],
     "widths": [25]
 },
 
 "sp² C-H": {
-    "frequencies": [3010, 3100],  # Alkene C-H
+    "frequencies": [3010, 3100],  
     "intensities": [35],
     "widths": [25]
 },
 
 "sp C-H": {
-    "frequencies": [3300],  # Alkyne C-H
+    "frequencies": [3300],  
     "intensities": [35],
     "widths": [25]
 },
-
-# --- C–C and C-N bond stretching regions ---
 
 "C-C (single)": {
     "frequencies": [800, 1300],

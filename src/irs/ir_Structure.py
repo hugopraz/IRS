@@ -2,8 +2,37 @@ from rdkit import Chem
 from collections import defaultdict
 import numpy as np
 import matplotlib.pyplot as plt
-import os
 from collections import Counter
+import os
+import json
+import pandas as pd
+
+json_path = os.path.join(os.path.dirname(__file__), "..", "..", "data", "dict_fg_IR_data.json")
+with open(json_path, "r", encoding="utf-8") as f:
+    try:
+        functional_groups_ir = json.load(f)
+    except json.JSONDecodeError as e:
+        raise ValueError(f"❌ Failed to decode JSON: {e}")
+
+flat_data = []
+
+for compound, props in functional_groups_ir.items():
+    freqs = props["frequencies"]
+    intensities = props["intensities"]
+    widths = props["widths"]
+    if isinstance(intensities, (int, float)):
+        intensities = [intensities] * len(freqs)
+    if isinstance(widths, (int, float)):
+        widths = [widths] * len(freqs)
+    for f, i, w in zip(freqs, intensities, widths):
+        flat_data.append({
+            "compound": compound,
+            "frequency": f,
+            "intensity": i,
+            "width": w
+        })
+
+df = pd.DataFrame(flat_data)
 
 def get_functional_groups(FUNCTIONAL_GROUPS_IR: dict, smiles):
     
@@ -15,7 +44,7 @@ def get_functional_groups(FUNCTIONAL_GROUPS_IR: dict, smiles):
     fg_counts = defaultdict(int)
 
     arene_matches = set()
-    for fg_name, smarts in FUNCTIONAL_GROUPS.items():
+    for fg_name, smarts in FUNCTIONAL_GROUPS_IR.items():
         pattern = Chem.MolFromSmarts(smarts)
         if not pattern:
             continue
@@ -168,12 +197,6 @@ def analyze_molecule(smiles: str) -> dict:
 
     return combined
 
-""""
-#Option 1
-import json
-with open("../data/functional_groups_ir.json") as f:
-    FUNCTIONAL_GROUPS_IR = json.load(f)
-
 #Option 2
 import importlib.util
 import os
@@ -183,12 +206,9 @@ absolute_path = os.path.abspath(relative_path)
 
 spec = importlib.util.spec_from_file_location("dictionnary", absolute_path)
 dictionnary = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(dictionnary)
 
 print("Available attributes in dictionnary:", dir(dictionnary)) 
-FUNCTIONAL_GROUPS_IR = dictionnary.FUNCTIONAL_GROUPS_IR
 components = ["Isocyanide", "Isocyanide"]
-"""
 
 def gaussian(x, center, intensity, width):
     """Generate a single Gaussian peak."""
@@ -225,7 +245,7 @@ def build_and_plot_ir_spectrum(FUNCTIONAL_GROUPS_IR: dict, components: dict, com
     plt.plot(common_axis, -absorbance, label="Simulated IR Spectrum")
     plt.xlabel("Wavenumber (cm⁻¹)")
     plt.ylabel("Relative Absorbance (a.u.)")
-    plt.title("Simulated IR Spectrum from Functional Groups")
+    plt.title("Simulated IR Spectrum (Functional Groups-based)")
     plt.gca().invert_xaxis()
     plt.grid(True)
     plt.legend()
@@ -233,3 +253,5 @@ def build_and_plot_ir_spectrum(FUNCTIONAL_GROUPS_IR: dict, components: dict, com
     plt.show()
 
     return common_axis, transmittance
+
+print(build_and_plot_ir_spectrum(functional_groups_ir, {"Hydroperoxide": 3}))
