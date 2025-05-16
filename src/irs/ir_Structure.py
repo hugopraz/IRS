@@ -6,6 +6,7 @@ from collections import Counter
 import os
 import json
 import pandas as pd
+import streamlit as st
 
 json_path = os.path.join(os.path.dirname(__file__), "..", "..", "data", "dict_fg_IR_data.json")
 with open(json_path, "r", encoding="utf-8") as f:
@@ -289,6 +290,7 @@ def build_and_plot_ir_spectrum_from_smiles(smiles: str, common_axis=None):
     plt.grid(True)
     plt.legend()
     plt.tight_layout()
-    plt.show()
+    fig = plt.gcf()
+    st.pyplot(fig)
 
     return common_axis, transmittance
