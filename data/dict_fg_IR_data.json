@@ -45,7 +45,7 @@
         "widths": [65, 25]
     },
     "Alcohol": {
-        "frequencies": [1130, 3400],
+        "frequencies": [3400, 1130],
         "intensities": [75, 35],
         "widths": [65, 25]
     },

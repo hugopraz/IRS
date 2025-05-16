@@ -294,5 +294,3 @@ def build_and_plot_ir_spectrum_from_smiles(smiles: str, common_axis=None):
     plt.show()
 
     return common_axis, transmittance
-
-
