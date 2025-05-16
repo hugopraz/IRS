@@ -96,7 +96,7 @@ def get_functional_groups(FUNCTIONAL_GROUPS: dict, smiles):
     return {k: v for k, v in fg_counts.items() if v > 0}
 
 def detect_main_functional_groups(smiles: str) -> dict:
-    fg_counts= get_functional_groups(smiles)
+    fg_counts= get_functional_groups(FUNCTIONAL_GROUPS, smiles)
 
     d = fg_counts.copy() 
 
@@ -219,8 +219,8 @@ def count_carbon_bonds_and_cn(smiles):
 
 def analyze_molecule(smiles: str) -> dict:
     validate_smiles(smiles)
-    fg = get_functional_groups(smiles)
-    fg_main = detect_main_functional_groups(fg, smiles)
+    fg = get_functional_groups(FUNCTIONAL_GROUPS, smiles)
+    fg_main = detect_main_functional_groups(smiles)
     ch_counts = count_ch_bonds(smiles)
     cc_bond_counts = count_carbon_bonds_and_cn(smiles)
 
@@ -255,7 +255,7 @@ def reconstruct_spectrum(x_axis, peaks):
         y += gaussian(x_axis, center, intensity, width)
     return y
 
-def build_and_plot_ir_spectrum_from_smiles(smiles: str, FUNCTIONAL_GROUPS_IR: dict, common_axis=None):
+def build_and_plot_ir_spectrum_from_smiles(smiles: str, common_axis=None):
     combined = analyze_molecule(smiles)
 
     if common_axis is None:
@@ -264,7 +264,7 @@ def build_and_plot_ir_spectrum_from_smiles(smiles: str, FUNCTIONAL_GROUPS_IR: di
     combined_peaks = []
 
     for group_name, count in combined.items():
-        group_data = FUNCTIONAL_GROUPS_IR.get(group_name)
+        group_data = functional_groups_ir.get(group_name)  # uses the globally loaded dictionary
         if group_data:
             freqs = group_data["frequencies"]
             intensities = group_data["intensities"]
@@ -295,6 +295,4 @@ def build_and_plot_ir_spectrum_from_smiles(smiles: str, FUNCTIONAL_GROUPS_IR: di
 
     return common_axis, transmittance
 
-r=build_and_plot_ir_spectrum_from_smiles("CCO")
-print(r)
 
