@@ -61,9 +61,9 @@ This method relies on an empirical, rule-based approach to approximate IR spectr
 
 ## 🛠️ Installation
 Pip install
-IRS can be installed using pip
+irspectrum-sim can be installed using pip
 ```bash
-pip install IRS
+pip install irspectrum-sim
 ```
 
 GitHub
@@ -126,10 +126,10 @@ If the installation is successful, the packages mentionned above should all be i
 
 | Goal                                             | Command                      |
 |-----------------------------------------------|------------------------------|
-| Check if a specific package is installed      | `pip show IRS`       |
+| Check if a specific package is installed      | `pip show irspectrum-sim`       |
 | See a list of all installed packages          | `pip list`                   |
-| Search for a package in the list (Linux/macOS)| `pip list \| grep IRS`   |
-| Search for a package in the list (Windows)    | `pip list \| findstr IRS`   |
+| Search for a package in the list (Linux/macOS)| `pip list \| grep irspectrum-sim`   |
+| Search for a package in the list (Windows)    | `pip list \| findstr irspectrum-sim`   |
 
 
 ## Need help?
@@ -158,16 +158,16 @@ pwd
 The output should end with `/IRS`
 3. Check and update IRS
 ```bash
-pip show IRS
+pip show irspectrum-sim
 ```
 If needed, update to the latest version
 ```bash
-pip install --upgrade IRS
+pip install --upgrade irspectrum-sim
 ```
-If problems continue, try uninstalling and reinstalling IRS, specifying the desired version
+If problems continue, try uninstalling and reinstalling irspectrum-sim, specifying the desired version
 ```bash
-pip uninstall IRS
-pip install IRS==x.x.x  #replace x.x.x with the specific version desired
+pip uninstall irspectrum-sim
+pip install irspectrum-sim==x.x.x  #replace x.x.x with the specific version desired
 ```
 4. Update pip if necessary
 Sometimes, issues may arise due to an outdated pip. Thus, to update pip:
