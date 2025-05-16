@@ -192,11 +192,10 @@ def count_carbon_bonds_and_cn(smiles):
         atom1 = bond.GetBeginAtom()
         atom2 = bond.GetEndAtom()
         bond_type = bond.GetBondType()
-
-        # C–C bonds
+        
         if atom1.GetSymbol() == 'C' and atom2.GetSymbol() == 'C':
             if bond.GetIsAromatic():
-                cc_double += 1  # Treat aromatic C–C bonds as double
+                cc_double += 1
             else:
                 if bond_type == Chem.BondType.SINGLE:
                     cc_single += 1
@@ -205,7 +204,6 @@ def count_carbon_bonds_and_cn(smiles):
                 elif bond_type == Chem.BondType.TRIPLE:
                     cc_triple += 1
 
-        # C–N single bonds
         elif ((atom1.GetSymbol() == 'C' and atom2.GetSymbol() == 'N') or
               (atom1.GetSymbol() == 'N' and atom2.GetSymbol() == 'C')) and bond_type == Chem.BondType.SINGLE:
             cn_single += 1
@@ -264,7 +262,7 @@ def build_and_plot_ir_spectrum_from_smiles(smiles: str, common_axis=None):
     combined_peaks = []
 
     for group_name, count in combined.items():
-        group_data = functional_groups_ir.get(group_name)  # uses the globally loaded dictionary
+        group_data = functional_groups_ir.get(group_name)
         if group_data:
             freqs = group_data["frequencies"]
             intensities = group_data["intensities"]
