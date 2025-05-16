@@ -230,30 +230,18 @@ def analyze_molecule(smiles: str) -> dict:
 
     return combined
 
-#Option 2
-import importlib.util
-import os
-
-relative_path = os.path.join(os.path.dirname(__file__), "../../data/dictionnary.py")
-absolute_path = os.path.abspath(relative_path)
-
-spec = importlib.util.spec_from_file_location("dictionnary", absolute_path)
-dictionnary = importlib.util.module_from_spec(spec)
-
-print("Available attributes in dictionnary:", dir(dictionnary)) 
-components = ["Isocyanide", "Isocyanide"]
-
+# Generate single Gaussian peak
 def gaussian(x, center, intensity, width):
-    """Generate a single Gaussian peak."""
     return intensity * np.exp(-((x - center) ** 2) / (2 * width ** 2))
 
+# Sum multiple Gaussian peaks
 def reconstruct_spectrum(x_axis, peaks):
-    """Sum multiple Gaussian peaks."""
     y = np.zeros_like(x_axis)
     for center, intensity, width in peaks:
         y += gaussian(x_axis, center, intensity, width)
     return y
 
+# Plots IR spectrum from a given smiles
 def build_and_plot_ir_spectrum_from_smiles(smiles: str, common_axis=None):
     combined = analyze_molecule(smiles)
 

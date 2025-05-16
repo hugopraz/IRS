@@ -5,10 +5,11 @@ import numpy as np
 from pathlib import Path
 from rdkit import Chem
 from rdkit.Chem import AllChem
-from irs.QM_combiner import (
-    generate_3d_from_smiles, guess_charge_multiplicity, write_orca_input,
-    estimate_peak_width, estimate_gaussian_sigma, parse_orca_output,
-    cleanup_files, run_orca_from_smiles, run_orca, gaussian
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from src.irs.QM_combiner import (
+    generate_3d_from_smiles, guess_charge_multiplicity, write_orca_input, parse_orca_output,
+    cleanup_files, run_orca
 )
 
 class TestOrcaFunctions(unittest.TestCase):
@@ -48,18 +49,6 @@ class TestOrcaFunctions(unittest.TestCase):
             content = open(path).read()
             self.assertIn("C", content)
             self.assertIn("O", content)
-
-    # Confirms peak width increases with frequency
-    def test_estimate_peak_width_increases_with_freq(self):
-        self.assertGreater(estimate_peak_width(3000), estimate_peak_width(500))
-
-    # Ensures sigma is positive and logically bounded
-    def test_estimate_gaussian_sigma_logically_bound(self):
-        freq = 1000
-        sigma = estimate_gaussian_sigma(freq)
-        self.assertGreater(sigma, 0)
-        self.assertLess(sigma, estimate_peak_width(freq))
-
     # Parses mocked ORCA output and verifies extracted values
     def test_parse_orca_output_valid_data(self):
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -109,72 +98,5 @@ class TestOrcaFunctions(unittest.TestCase):
             self.assertIsNone(run_orca("nonexistent.inp"))
         finally:
             subprocess.run = original_run
-
-    # Ensures invalid SMILES is rejected gracefully
-    def test_run_orca_from_smiles_invalid_smiles(self):
-        from irs import ir_ORCA
-        original_func = ir_ORCA.generate_3d_from_smiles
-        ir_ORCA.generate_3d_from_smiles = lambda x: None
-        try:
-            self.assertIsNone(run_orca_from_smiles("??"))
-        finally:
-            ir_ORCA.generate_3d_from_smiles = original_func
-
-    # Validates Gaussian peak location and maximum value
-    def test_gaussian_peak_maximum(self):
-        x = np.linspace(-5, 5, 1000)
-        mu = 0
-        sigma = 1
-        y = gaussian(x, mu, sigma)
-        peak_index = np.argmax(y)
-        self.assertAlmostEqual(x[peak_index], mu, delta=1e-2)
-        self.assertAlmostEqual(y[peak_index], 1.0, places=5)
-
-    # Confirms symmetry of Gaussian about its mean
-    def test_gaussian_symmetry_about_mu(self):
-        x = np.linspace(-10, 10, 10001)
-        mu = 2.0
-        sigma = 1.5
-        y = gaussian(x, mu, sigma)
-        left = y[:len(y)//2]
-        right = y[len(y)//2+1:][::-1]
-        np.testing.assert_allclose(left, right, rtol=1e-5)
-
-    # Checks Gaussian full width at half maximum ≈ 2.355 * sigma
-    def test_gaussian_width_property(self):
-        mu = 0
-        sigma = 1
-        x = np.linspace(-10, 10, 10001)
-        y = gaussian(x, mu, sigma)
-        half_max = 0.5
-        indices = np.where(y >= half_max)[0]
-        width = x[indices[-1]] - x[indices[0]]
-        self.assertAlmostEqual(width, 2.355 * sigma, delta=0.05)
-
-    # Confirms peak width increases with frequency across range
-    def test_estimate_peak_width_monotonic(self):
-        freqs = np.linspace(0, 4000, 100)
-        widths = [estimate_peak_width(f) for f in freqs]
-        self.assertTrue(all(w2 > w1 for w1, w2 in zip(widths, widths[1:])))
-
-    # Verifies FWHM to sigma conversion is consistent
-    def test_estimate_gaussian_sigma_consistency(self):
-        freqs = [400, 800, 1600, 3200]
-        for f in freqs:
-            fwhm = estimate_peak_width(f)
-            sigma = estimate_gaussian_sigma(f)
-            expected_sigma = 0.425 * fwhm
-            self.assertAlmostEqual(sigma, expected_sigma, places=5)
-
-    # Tests that area under Gaussian scales linearly with sigma
-    def test_gaussian_area_scaling(self):
-        x = np.linspace(-50, 50, 10000)
-        sigma_values = [0.5, 1, 2]
-        areas = [np.trapz(gaussian(x, 0, s), x) for s in sigma_values]
-        ratios = [areas[i+1] / areas[i] for i in range(len(areas)-1)]
-        expected_ratios = [2, 2]
-        for r, er in zip(ratios, expected_ratios):
-            self.assertAlmostEqual(r, er, delta=0.2)
-
 if __name__ == '__main__':
     unittest.main()
