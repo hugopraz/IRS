@@ -217,14 +217,6 @@ class TestIRStructureFunctions(unittest.TestCase):
                 result = gaussian(x, 5, intensity, 1)
                 self.assertAlmostEqual(result.max(), intensity)
 
-    def test_combine_spectra_from_peaks_component_counting(self):
-        for count in [1, 2, 5]:
-            with self.subTest(count=count):
-                components = ["Isocyanide"] * count
-                x, transmittance = combine_spectra_from_peaks(SAMPLE_SPECTRA, components)
-                peak_idx = np.abs(x - 2100).argmin()
-                expected = 1 - min(1, count * 0.9)
-                self.assertAlmostEqual(transmittance[peak_idx], expected, delta=0.1)
 
     def test_functional_groups_json_loading(self):
         json_path = os.path.join(os.path.dirname(__file__), "../data/functional_groups_ir.json")

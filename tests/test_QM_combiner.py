@@ -6,10 +6,8 @@ from pathlib import Path
 from rdkit import Chem
 from rdkit.Chem import AllChem
 import sys
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from src.irs.QM_combiner import (
-    generate_3d_from_smiles, guess_charge_multiplicity, write_orca_input, parse_orca_output,
-    cleanup_files, run_orca
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from src.irs.QM_combiner import (    
 )
 
 class TestOrcaFunctions(unittest.TestCase):
