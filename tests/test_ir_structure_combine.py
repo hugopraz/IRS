@@ -33,7 +33,7 @@ class TestIRSpectrumPipeline(unittest.TestCase):
         self.assertEqual(len(yy), 5000)
         self.assertTrue(np.all(yy <= 1.0))
         self.assertTrue(np.all(yy >= 0.0))
-
+    
 if __name__ == "__main__":
     unittest.main()
 

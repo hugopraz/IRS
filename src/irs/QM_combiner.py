@@ -47,6 +47,7 @@ with st.sidebar:
             "PBE0/def2-SVP (Fast)": "PBE0 def2-SVP",
             "wB97X-D3/def2-TZVP (Accurate)": "wB97X-D3 def2-TZVP"
         }
+        selected_method = method_mapping[method_choice]
     else:
         selected_method= "Functional Group"
     
