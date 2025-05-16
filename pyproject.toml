@@ -1,18 +1,25 @@
-[build-system] 
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
 
 [project]
-name = "IRS"
-readme = "README.md"
+name = "irspectrum-sim"
+dynamic = ["version"]
+description = "Infrared Spectrum Simulator using Streamlit, Psi4 and ORCA"
 requires-python = ">=3.10"
 license = {file = "LICENSE"}
-description = "IRSimulator"
 dependencies = [
-    # "rdkit",
+     "rdkit",
+     "streamlit",
+     "pubchempy",
+     "numpy",
+     "matplotlib",
+     "py3Dmol"
 ]
 authors = [
-    {name = "Hugo", email = "hugo.praz@epfl.ch"}
+    {name = "Hugo", email = "hugo.praz@epfl.ch"},
+    {name = "Ryans", email = "ryans.chen@epfl.ch"},
+    {name = "Anders Eggen", email = "anders.eggen@epfl.ch"}
 ]
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -20,17 +27,13 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
 ]
-dynamic = ["version"]
 
 [project.urls]
-source = "https://github.com/hugopraz/IRS"
-tracker = "https://github.com/hugopraz/IRS/issues"
+source = "https://github.com/ryanschen0/IRS"
+tracker = "https://github.com/ryanschen0/IRS/issues"
 
 [project.optional-dependencies]
 test = [
@@ -64,3 +67,4 @@ omit = [
 exclude_also = [
     "if __name__ == .__main__.:",
 ]
+
