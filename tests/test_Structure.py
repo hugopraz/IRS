@@ -209,30 +209,6 @@ class TestIRStructureFunctions(unittest.TestCase):
         result = reconstruct_spectrum(x_axis, [])
         self.assertTrue(np.all(result == 0))
 
-    """"
-    # Tests combination of spectra with duplicate components
-    def test_combine_spectra_from_peaks(self):
-        components = ["Isocyanide", "Isocyanide"]
-        x, transmittance = combine_spectra_from_peaks(SAMPLE_SPECTRA, components)
-        peak_idx = np.abs(x - 2100).argmin()
-        self.assertLess(transmittance[peak_idx], 0.2)
-
-    # Tests spectrum combination with empty component list
-    def test_combine_spectra_from_peaks_empty_components(self):
-        x, transmittance = combine_spectra_from_peaks(SAMPLE_SPECTRA, [])
-        self.assertTrue(np.all(transmittance == 1))
-
-    # Tests handling of unknown components in spectrum combination
-    def test_combine_spectra_from_peaks_unknown_components(self):
-        x, transmittance = combine_spectra_from_peaks(SAMPLE_SPECTRA, ["Unknown"])
-        self.assertTrue(np.all(transmittance == 1))
-
-    # Tests custom x-axis handling in spectrum combination
-    def test_combine_spectra_from_peaks_custom_axis(self):
-        custom_x = np.linspace(500, 3000, 100)
-        x, _ = combine_spectra_from_peaks(SAMPLE_SPECTRA, ["Isocyanide"], custom_x)
-        self.assertTrue(np.array_equal(x, custom_x))
-    """
 
     def test_gaussian_intensity_scaling(self):
         for intensity in [0.1, 0.5, 1.0]:
