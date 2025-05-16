@@ -1,7 +1,11 @@
 import os
+import sys
 import json
 import unittest
 import numpy as np
+from rdkit import Chem
+from collections import defaultdict
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from src.irs.ir_Structure import (
     gaussian,
     reconstruct_spectrum,
@@ -11,9 +15,13 @@ from src.irs.ir_Structure import (
     count_ch_bonds,
     count_carbon_bonds_and_cn,
     analyze_molecule,
-    FUNCTIONAL_GROUPS,
 )
-
+json_path_patters = os.path.join(os.path.dirname(__file__), "..", "..", "data", "dict_fg_detection.json")
+with open(json_path_patters, "r", encoding="utf-8") as f:
+    try:
+        FUNCTIONAL_GROUPS = json.load(f)
+    except json.JSONDecodeError as e:
+        raise ValueError(f"❌ Failed to decode JSON: {e}")
 
 # Test data constants
 SAMPLE_PEAKS = [(1000, 0.8, 50), (1500, 0.5, 30)]
