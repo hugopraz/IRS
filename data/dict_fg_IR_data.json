@@ -94,40 +94,40 @@
         "intensities": [75],
         "widths": [10]
     },
-    "Azide": {
-        "frequencies": [2130],
-        "intensities": [75],
-        "widths": [10]
+    "Diazenyl (no H)": {
+        "frequencies": [1440],
+        "intensities": [60],
+        "widths": [20]
     },
-    "Diazenyl": {
-        "frequencies": [1650],
-        "intensities": [75],
-        "widths": [10]
+    "Diazenyl (one H)": {
+        "frequencies": [3300, 1440],
+        "intensities": [35, 35],
+        "widths": [10, 10]
     },
-    "N-Oxide (charged)": {
-        "frequencies": [1150],
+    "Diazenyl (two H)": {
+        "frequencies": [3300, 3500, 1440],
+        "intensities": [35, 35],
+        "widths": [10, 10]
+    },
+    "N-Oxide (Primary)": {
+        "frequencies": [3300, 3500, 915],
+        "intensities": [35, 35],
+        "widths": [10, 10]
+    },
+    "N-Oxide (Secondary)": {
+        "frequencies": [3400, 915],
+        "intensities": [35, 35],
+        "widths": [10, 10]
+    },
+    "N-Oxide (Tertiary)": {
+        "frequencies": [915],
         "intensities": [35],
         "widths": [10]
     },
-    "N-Oxide (acyclic)": {
-        "frequencies": [1150],
-        "intensities": [35],
-        "widths": [10]
-    },
-    "N-Oxide (nitroso)": {
-        "frequencies": [1150],
-        "intensities": [35],
-        "widths": [10]
-    },
-    "N-Oxide (imine-ether)": {
-        "frequencies": [1150],
-        "intensities": [35],
-        "widths": [10]
-    },
-    "N-Oxide": {
-        "frequencies": [1150],
-        "intensities": [35],
-        "widths": [10]
+    "N-Oxide (Aromatic)": {
+        "frequencies": [1280, 915],
+        "intensities": [35, 35],
+        "widths": [10, 10]
     },
     "N-hydroxyl (imine)": {
         "frequencies": [3400, 975, 1400],
@@ -144,7 +144,17 @@
         "intensities": [75, 75, 35],
         "widths": [65, 25, 25]
     },
-    "Nitroso": {
+    "Nitroso (one H)": {
+        "frequencies": [3400, 1550],
+        "intensities": [35, 35],
+        "widths": [10, 10]
+    },
+    "Nitroso (two H)": {
+        "frequencies": [3500, 3300, 1550],
+        "intensities": [35, 35, 35],
+        "widths": [10, 10, 10]
+    },
+    "Nitroso (no H)": {
         "frequencies": [1550],
         "intensities": [35],
         "widths": [10]
@@ -175,13 +185,13 @@
         "widths": [10]
     },
 "sp³ C-H": {
-    "frequencies": [2850, 2960],  
+    "frequencies": [2905],  
     "intensities": [35],
     "widths": [25]
 },
 
 "sp² C-H": {
-    "frequencies": [3010, 3100],  
+    "frequencies": [3055],  
     "intensities": [35],
     "widths": [25]
 },
@@ -193,19 +203,19 @@
 },
 
 "C-C (single)": {
-    "frequencies": [800, 1300],
+    "frequencies": [1050],
     "intensities": [12.5],
     "widths": [25]
 },
 
 "C=C (double)": {
-    "frequencies": [1600, 1680],
+    "frequencies": [1640],
     "intensities": [35],
     "widths": [25]
 },
 
 "C≡C (triple)": {
-    "frequencies": [2100, 2260],
+    "frequencies": [2180],
     "intensities": [12.5],
     "widths": [25]
 },
