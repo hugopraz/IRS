@@ -5,7 +5,7 @@ import unittest
 import numpy as np
 from rdkit import Chem
 from collections import defaultdict
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from src.irs.ir_Structure import (
     gaussian,
     reconstruct_spectrum,
@@ -14,9 +14,9 @@ from src.irs.ir_Structure import (
     detect_main_functional_groups,
     count_ch_bonds,
     count_carbon_bonds_and_cn,
-    analyze_molecule,
+    analyze_molecule
 )
-json_path_patters = os.path.join(os.path.dirname(__file__), "..", "..", "data", "dict_fg_detection.json")
+json_path_patters = os.path.join(os.path.dirname(__file__), "..", "data", "dict_fg_detection.json")
 with open(json_path_patters, "r", encoding="utf-8") as f:
     try:
         FUNCTIONAL_GROUPS = json.load(f)
@@ -274,3 +274,6 @@ class TestIRStructureFunctions(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+    
