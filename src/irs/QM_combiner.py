@@ -344,7 +344,6 @@ input_mode = st.radio("Input method", ["Molecule name", "SMILES string"])
 smiles = None
 
 col1, col2 = st.columns(2)
-
 with col1:
     if input_mode == "Molecule name":
         molecule_name = st.text_input("Enter a molecule name (e.g., ethanol, acetone):", "ethanol")
@@ -352,7 +351,6 @@ with col1:
             smiles = name_to_smiles(molecule_name)
     else:
         smiles = st.text_input("Enter a SMILES string (e.g., CCO for ethanol):", "CCO")
-
 with col2:
     if smiles:
         st.success(f"✅ SMILES: `{smiles}`")
@@ -365,22 +363,17 @@ with col2:
 
 if smiles:
     st.subheader("3D Molecular Structure")
-    
     try:
         mol = generate_3d_molecule(smiles)
         if mol:
             num_atoms = mol.GetNumAtoms()
-            
             if num_atoms > 50:
-                st.warning(f"⚠️ Molecule has {num_atoms} atoms. Calculation may be very slow or fail!")
-                
+                st.warning(f"⚠️ Molecule has {num_atoms} atoms. Calculation may be very slow or fail!") 
             col1, col2 = st.columns(2)
-            
             with col1:
                 st.write(f"Number of atoms: {num_atoms}")
                 charge, multiplicity = guess_charge_multiplicity(mol)
-                st.write(f"Charge: {charge}, Multiplicity: {multiplicity}")
-                
+                st.write(f"Charge: {charge}, Multiplicity: {multiplicity}")   
             with col2:
                 try:
                     viewer = mol_to_3dviewer(mol)
