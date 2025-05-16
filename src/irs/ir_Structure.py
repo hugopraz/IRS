@@ -13,6 +13,13 @@ with open(json_path, "r", encoding="utf-8") as f:
         functional_groups_ir = json.load(f)
     except json.JSONDecodeError as e:
         raise ValueError(f"❌ Failed to decode JSON: {e}")
+    
+json_path_patters = os.path.join(os.path.dirname(__file__), "..", "..", "data", "dict_fg_detection.json")
+with open(json_path_patters, "r", encoding="utf-8") as f:
+    try:
+        FUNCTIONAL_GROUPS = json.load(f)
+    except json.JSONDecodeError as e:
+        raise ValueError(f"❌ Failed to decode JSON: {e}")
 
 flat_data = []
 
@@ -48,8 +55,7 @@ def validate_smiles(smiles: str):
         if atom.GetFormalCharge() != 0:
             raise ValueError(f"Charged atom detected: {symbol} with charge {atom.GetFormalCharge()}. The molecule must be neutral.")
 
-    # Check aromatic rings with O or N and carbon count
-    ssr = Chem.GetSymmSSSR(mol)  # Get ring information
+    ssr = Chem.GetSymmSSSR(mol)  
     for ring in ssr:
         ring_atoms = [mol.GetAtomWithIdx(idx) for idx in ring]
         if all(atom.GetIsAromatic() for atom in ring_atoms):
@@ -63,7 +69,7 @@ def validate_smiles(smiles: str):
 
     return True
 
-def get_functional_groups(FUNCTIONAL_GROUPS_IR: dict, smiles):
+def get_functional_groups(FUNCTIONAL_GROUPS: dict, smiles):
     
     mol = Chem.MolFromSmiles(smiles)
     
@@ -71,7 +77,7 @@ def get_functional_groups(FUNCTIONAL_GROUPS_IR: dict, smiles):
     fg_counts = defaultdict(int)
 
     arene_matches = set()
-    for fg_name, smarts in FUNCTIONAL_GROUPS_IR.items():
+    for fg_name, smarts in FUNCTIONAL_GROUPS.items():
         pattern = Chem.MolFromSmarts(smarts)
         if not pattern:
             continue
@@ -249,18 +255,25 @@ def reconstruct_spectrum(x_axis, peaks):
         y += gaussian(x_axis, center, intensity, width)
     return y
 
-def build_and_plot_ir_spectrum(FUNCTIONAL_GROUPS_IR: dict, components: dict, common_axis=None):
+def build_and_plot_ir_spectrum_from_smiles(smiles: str, FUNCTIONAL_GROUPS_IR: dict, common_axis=None):
+    combined = analyze_molecule(smiles)
+
     if common_axis is None:
         common_axis = np.linspace(400, 4000, 5000)
 
     combined_peaks = []
 
-    for group_name, count in components.items():
+    for group_name, count in combined.items():
         group_data = FUNCTIONAL_GROUPS_IR.get(group_name)
         if group_data:
             freqs = group_data["frequencies"]
             intensities = group_data["intensities"]
             widths = group_data["widths"]
+
+            if isinstance(intensities, (int, float)):
+                intensities = [intensities] * len(freqs)
+            if isinstance(widths, (int, float)):
+                widths = [widths] * len(freqs)
 
             for f, i, w in zip(freqs, intensities, widths):
                 combined_peaks.append((f, i * count, w))
@@ -273,7 +286,7 @@ def build_and_plot_ir_spectrum(FUNCTIONAL_GROUPS_IR: dict, components: dict, com
     plt.plot(common_axis, -absorbance, label="Simulated IR Spectrum")
     plt.xlabel("Wavenumber (cm⁻¹)")
     plt.ylabel("Relative Absorbance (a.u.)")
-    plt.title("Simulated IR Spectrum (Functional Groups-based)")
+    plt.title(f"Simulated IR Spectrum for {smiles}")
     plt.gca().invert_xaxis()
     plt.grid(True)
     plt.legend()
@@ -281,4 +294,7 @@ def build_and_plot_ir_spectrum(FUNCTIONAL_GROUPS_IR: dict, components: dict, com
     plt.show()
 
     return common_axis, transmittance
-print(build_and_plot_ir_spectrum(functional_groups_ir, {"Hydroperoxide": 3}))
+
+r=build_and_plot_ir_spectrum_from_smiles("CCO")
+print(r)
+
