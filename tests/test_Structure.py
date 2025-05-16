@@ -2,7 +2,7 @@ import os
 import json
 import unittest
 import numpy as np
-from IRS.src.irs.ir_Structure import (
+from irs.ir_structure import (
     gaussian,
     reconstruct_spectrum,
     combine_spectra_from_peaks

@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from drfp.irs_combiner import gaussian, reconstruct_spectrum, combine_spectra_from_peaks
+from src.irs.ir_Structure import gaussian, reconstruct_spectrum, combine_spectra_from_peaks
 # --- Unit tests ---
 class TestIRSpectrumPipeline(unittest.TestCase):
     def test_gaussian_peak_center(self):
