@@ -142,10 +142,12 @@ def plot_ir_spectrum(freqs, intensities, sigma=20, scale_factor=0.97):
 # 2. Psi4-specific functions
 @st.cache_resource(show_spinner="🔄 Optimizing geometry...")
 
+# Cache the results of geometry optimization to avoid recomputation
 def cached_geometry_optimization(smiles, method):
     """Cache results of geometry optimization to avoid recomputation"""
     return smiles_to_optimized_geometry(smiles, method)
 
+# Generate 3D molecule and optimize geometry using Psi4
 def smiles_to_optimized_geometry(smiles, method):
     """Convert SMILES to optimized geometry using Psi4"""
     import psi4
@@ -180,6 +182,7 @@ units angstrom
 
     return molecule, mol
 
+# Calculate vibrational frequencies using Psi4
 def psi4_calculate_frequencies(molecule, selected_method):
     """Calculate vibrational frequencies using Psi4"""
     import psi4
