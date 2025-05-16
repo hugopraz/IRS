@@ -34,11 +34,38 @@ for compound, props in functional_groups_ir.items():
 
 df = pd.DataFrame(flat_data)
 
+def validate_smiles(smiles: str):
+    allowed_atoms = {"I", "F", "Cl", "Br", "N", "O", "H", "C"}
+
+    mol = Chem.MolFromSmiles(smiles)
+    if mol is None:
+        raise ValueError("Invalid SMILES string.")
+
+    for atom in mol.GetAtoms():
+        symbol = atom.GetSymbol()
+        if symbol not in allowed_atoms:
+            raise ValueError(f"Atom '{symbol}' is not allowed. Only these atoms are permitted: {', '.join(sorted(allowed_atoms))}.")
+        if atom.GetFormalCharge() != 0:
+            raise ValueError(f"Charged atom detected: {symbol} with charge {atom.GetFormalCharge()}. The molecule must be neutral.")
+
+    # Check aromatic rings with O or N and carbon count
+    ssr = Chem.GetSymmSSSR(mol)  # Get ring information
+    for ring in ssr:
+        ring_atoms = [mol.GetAtomWithIdx(idx) for idx in ring]
+        if all(atom.GetIsAromatic() for atom in ring_atoms):
+            ring_symbols = [atom.GetSymbol() for atom in ring_atoms]
+            if any(sym in {"N", "O"} for sym in ring_symbols):
+                carbon_count = ring_symbols.count("C")
+                if carbon_count not in {5, 6}:
+                    raise ValueError(
+                        f"Aromatic ring with heteroatoms (N or O) must have 5 or 6 carbon atoms. Found {carbon_count} C atoms in ring: {ring_symbols}"
+                    )
+
+    return True
+
 def get_functional_groups(FUNCTIONAL_GROUPS_IR: dict, smiles):
     
     mol = Chem.MolFromSmiles(smiles)
-    if mol is None:
-        raise ValueError("Invalid SMILES string")
     
     mol = Chem.AddHs(mol) 
     fg_counts = defaultdict(int)
@@ -185,6 +212,7 @@ def count_carbon_bonds_and_cn(smiles):
     }
 
 def analyze_molecule(smiles: str) -> dict:
+    validate_smiles(smiles)
     fg = get_functional_groups(smiles)
     fg_main = detect_main_functional_groups(fg, smiles)
     ch_counts = count_ch_bonds(smiles)
