@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "irspectrum-sim"
-dynamic = ["version"]
+version = "0.0.2"
 description = "Infrared Spectrum Simulator using Streamlit, Psi4 and ORCA"
 requires-python = ">=3.10"
 license = {file = "LICENSE"}
@@ -17,8 +17,8 @@ dependencies = [
      "py3Dmol"
 ]
 authors = [
-    {name = "Hugo", email = "hugo.praz@epfl.ch"},
-    {name = "Ryans", email = "ryans.chen@epfl.ch"},
+    {name = "Hugo Praz", email = "hugo.praz@epfl.ch"},
+    {name = "Ryans Chen", email = "ryans.chen@epfl.ch"},
     {name = "Anders Eggen", email = "anders.eggen@epfl.ch"}
 ]
 classifiers = [
@@ -52,6 +52,14 @@ doc = [
 
 [tool.hatch.version]
 path = "src/irs/__init__.py"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+packages = ["irs"]
+include-package-data = true
+
+[tool.setuptools.package-data]
+"irs" = ["data/*.json"]
 
 [tool.pytest.ini_options]
 testpaths = [
