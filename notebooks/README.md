@@ -15,12 +15,15 @@ The first one is the simulation of IR spectra using Psi4 and ORCA, two different
 [![EPFL Course](https://img.shields.io/badge/EPFL-red?style=for-the-badge)](https://edu.epfl.ch/coursebook/en/practical-programming-in-chemistry-CH-200)
 
 ## Contributors
+<div align="center">
+
 | Name                  | GitHub                                  |
 |-----------------------|------------------------------------------|
 | Ryans Chen            | [@ryanschen0](https://github.com/ryanschen0) ![GitHub](https://img.shields.io/badge/GitHub-ryanschen0-181717.svg?style=flat&logo=github) |
 | Hugo Praz             | [@hugopraz](https://github.com/hugopraz) ![GitHub](https://img.shields.io/badge/GitHub-hugopraz-181717.svg?style=flat&logo=github) |
 | Anders Thomas Eggen   | [@Anders-Eggen](https://github.com/Anders-Eggen) ![GitHub](https://img.shields.io/badge/GitHub-Anders--Eggen-181717?style=flat&logo=github) |
 
+</div>
 
 <p align="center">
   <a href="https://www.python.org">
@@ -61,6 +64,8 @@ This method relies on an empirical, rule-based approach to approximate IR spectr
 
 
 ## Stack 
+<div align="center">
+
 | Component     | Library                 |
 | ------------- | ----------------------- |
 | Molecular Input/Output, Substructure Matching & Molecular Parsing | `PubChemPy`, `RDKit`    |
@@ -69,6 +74,9 @@ This method relies on an empirical, rule-based approach to approximate IR spectr
 | Visualization | `py3Dmol`, `Matplotlib` |
 | Interface     | `Streamlit`             |
 | Math / Logic  | `NumPy`                 |
+
+</div>
+
 
 
 ## 🔥 Usage
@@ -167,13 +175,16 @@ pandas
 
 If the installation is successful, the packages mentionned above should all be installed automatically. However, this can be verified by checking if all have been installed in the desired environnement using the following commands:
 
-| Goal                                             | Command                      |
-|-----------------------------------------------|------------------------------|
-| Check if a specific package is installed      | `pip show irspectrum-sim`       |
-| See a list of all installed packages          | `pip list`                   |
-| Search for a package in the list (Linux/macOS)| `pip list \| grep irspectrum-sim`   |
-| Search for a package in the list (Windows)    | `pip list \| findstr irspectrum-sim`   |
+<div align="center">
 
+| Goal                                             | Command                             |
+|--------------------------------------------------|-------------------------------------|
+| Check if a specific package is installed         | `pip show irspectrum-sim`           |
+| See a list of all installed packages             | `pip list`                          |
+| Search for a package in the list (Linux/macOS)   | `pip list \| grep irspectrum-sim`   |
+| Search for a package in the list (Windows)       | `pip list \| findstr irspectrum-sim`|
+
+</div>
 
 ## Need help?
 If you encounter issues or the program doesn't work, try the following steps to troubleshoot:
