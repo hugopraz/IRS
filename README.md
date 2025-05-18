@@ -122,7 +122,7 @@ For example:
 ```bash
 C:\temp\orca_output\
 ```
-This directory will store ORCA's output files. <br>
+This directory will store ORCA's output files. <br> <br>
 Then, visit the ORCA Forum and create an account or log in: <br>
 https://orcaforum.kofo.mpg.de/app.php/portal <br>
 Navigate to the "Downloads" section. <br>
@@ -133,7 +133,7 @@ orca_5_0_4_win64_part2.zip
 orca_5_0_4_win64_part3.zip
 ```
 For Linux or macOS, download the corresponding ORCA tarball (.tar.xz) instead of the zip files. <br>
-   Note: The version numbers may vary but ensure downloading version 5.0.2 or newer for the project to run properly. <br>
+   Note: The version numbers may vary but ensure downloading version 5.0.2 or newer for the project to run properly. <br> <br>
 Extract Archives: <br>
 Use a tool like WinRAR or 7-Zip to extract each of the three zip files into the installation directory. Ensure all files from the three parts are consolidated into the same folder.
 
