@@ -120,7 +120,7 @@ For Windows, download the following three parts:<br>
 orca_5_0_4_win64_part1.zip
 orca_5_0_4_win64_part2.zip
 orca_5_0_4_win64_part3.zip
-```<br>
+```
 For Linux or macOS, download the corresponding ORCA tarball (.tar.xz) instead of the zip files. <br>
    Note: The version numbers may vary; ensure you're downloading version 5.0.2 or newer. <br>
 Create installation directory:
