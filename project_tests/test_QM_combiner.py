@@ -3,14 +3,18 @@ import os
 import tempfile
 import numpy as np
 from pathlib import Path
-from rdkit import Chem
-from rdkit.Chem import AllChem
 import sys
-import io
 from unittest.mock import patch, MagicMock
 
+# Path Configuration
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
+# RDKit imports
+from rdkit import Chem
+from rdkit.Chem import AllChem
+
+# Import functions to test
 from src.irs.QM_combiner import (
     generate_3d_molecule,
     guess_charge_multiplicity,
@@ -22,39 +26,93 @@ from src.irs.QM_combiner import (
     name_to_smiles,
     mol_to_3dviewer,
     psi4_calculate_frequencies,
-    show_3dmol
+    show_3dmol, 
+    build_and_plot_ir_spectrum_from_smiles, 
+    smiles_to_optimized_geometry
 )
 
+# Mock classes for testing
+class MockMol:
+    def __init__(self, charge=0, unpaired=0):
+        self.charge = charge
+        self.unpaired = unpaired
+        self.atoms = []
+        
+    def GetFormalCharge(self):
+        return self.charge
+        
+    def GetAtoms(self):
+        return self.atoms
+        
+    def GetNumAtoms(self):
+        return len(self.atoms)
+        
+    def GetConformer(self):
+        return MockConformer()
+
+class MockAtom:
+    def __init__(self, symbol="C", idx=0, radical_electrons=0):
+        self.symbol = symbol
+        self.idx = idx
+        self.radical_electrons = radical_electrons
+        
+    def GetSymbol(self):
+        return self.symbol
+        
+    def GetIdx(self):
+        return self.idx
+        
+    def GetNumRadicalElectrons(self):
+        return self.radical_electrons
+
+class MockConformer:
+    def GetAtomPosition(self, idx):
+        return MockPosition()
+
+class MockPosition:
+    def __init__(self):
+        self.x = 0.0
+        self.y = 0.0
+        self.z = 0.0
+
+
 class TestOrcaFunctions(unittest.TestCase):
-    # Generates a 3D molecule with hydrogens from a valid SMILES
+
+    # Create temp directory for tests
+    def setUp(self):
+        self.temp_dir = tempfile.TemporaryDirectory()
+        
+    def tearDown(self):
+        self.temp_dir.cleanup()
+
+    # Verifies that a 3D molecule can be correctly generated from a valid SMILES string
     def test_generate_3d_from_smiles_returns_molecule(self):
         mol = generate_3d_molecule("CCO")
         self.assertIsNotNone(mol)
         self.assertGreater(mol.GetNumConformers(), 0)
 
-    # Checks that hydrogens are added to the structure
+    # Ensures that hydrogens are properly added to the molecular structure
     def test_generate_molecule_contains_hydrogens(self):
         mol = generate_3d_molecule("C")
         atoms = [atom.GetSymbol() for atom in mol.GetAtoms()]
         self.assertIn("H", atoms)
     
-    # Tests if the function handles invalid SMILES correctly
+    # Validates that the function properly handles invalid SMILES input by returning None
     def test_generate_3d_molecule_invalid_smiles(self):
         with patch('rdkit.Chem.MolFromSmiles', return_value=None):
             result = generate_3d_molecule("InvalidSMILES")
             self.assertIsNone(result)
     
-    # Tests if the function handles embedding failures correctly
+    # Checks that the function correctly handles failures in 3D structure embedding
     def test_generate_3d_molecule_embedding_failure(self):
         mock_mol = MagicMock()
         with patch('rdkit.Chem.MolFromSmiles', return_value=mock_mol), \
              patch('rdkit.Chem.AddHs', return_value=mock_mol), \
-             patch('rdkit.Chem.AllChem.EmbedMolecule', return_value=1), \
              patch('rdkit.Chem.AllChem.EmbedMolecule', return_value=1):
             result = generate_3d_molecule("C")
             self.assertIsNone(result)
     
-    # Tests if UFF optimization failures are handled gracefully
+    # Ensures UFF optimization failures don't crash the function and a molecule is still returned
     def test_generate_3d_molecule_uff_failure(self):
         mock_mol = MagicMock()
         mock_mol.GetNumConformers.return_value = 1
@@ -66,21 +124,21 @@ class TestOrcaFunctions(unittest.TestCase):
             result = generate_3d_molecule("C")
             self.assertIsNotNone(result)
 
-    # Verifies correct charge and singlet multiplicity
+    # Checks that neutral molecules are assigned charge 0 and singlet multiplicity 1
     def test_guess_charge_and_multiplicity_neutral(self):
         mol = generate_3d_molecule("CCO")
         charge, multiplicity = guess_charge_multiplicity(mol)
         self.assertEqual(charge, 0)
         self.assertEqual(multiplicity, 1)
 
-    # Verifies multiplicity for radical species
+    # Verifies that radical species are correctly assigned doublet multiplicity (2)
     def test_guess_charge_and_multiplicity_radical(self):
         mol = Chem.AddHs(Chem.MolFromSmiles("[CH3]"))
         AllChem.EmbedMolecule(mol)
         _, multiplicity = guess_charge_multiplicity(mol)
         self.assertEqual(multiplicity, 2)
     
-    # Tests if the function correctly handles charged molecules
+    # Confirms that positively charged molecules retain their formal charge
     def test_guess_charge_and_multiplicity_charged(self):
         mol = Chem.AddHs(Chem.MolFromSmiles("C[N+](C)(C)C"))
         AllChem.EmbedMolecule(mol)
@@ -88,7 +146,7 @@ class TestOrcaFunctions(unittest.TestCase):
         self.assertEqual(charge, 1)
         self.assertEqual(multiplicity, 1)
 
-    # Confirms ORCA .inp file is created and contains atoms
+    # Verifies that ORCA input files are created with correct content and structure
     def test_write_orca_input_file_content(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             mol = generate_3d_molecule("CO")
@@ -100,7 +158,7 @@ class TestOrcaFunctions(unittest.TestCase):
             self.assertIn("O", content)
             self.assertIn("* xyz 0 1", content)
     
-    # Tests if the function creates directories when they don't exist
+    # Confirms that the function creates directories when they don't exist
     def test_write_orca_input_creates_directory(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             nonexistent_dir = os.path.join(tmpdir, "new_dir")
@@ -109,7 +167,7 @@ class TestOrcaFunctions(unittest.TestCase):
             self.assertTrue(os.path.exists(nonexistent_dir))
             self.assertTrue(os.path.exists(inp_path))
 
-    # Verifies function returns None on empty IR spectrum block
+    # Checks that empty IR spectrum blocks in ORCA output files return None for frequencies and intensities
     def test_parse_orca_output_empty_block(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             out_file = Path(tmpdir) / "empty.out"
@@ -118,7 +176,7 @@ class TestOrcaFunctions(unittest.TestCase):
             self.assertIsNone(freqs)
             self.assertIsNone(intensities)
 
-    # Confirms safe handling of corrupt or incomplete ORCA output
+    # Ensures corrupt or invalid ORCA output files are handled gracefully
     def test_parse_orca_output_fails_gracefully(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             out_file = Path(tmpdir) / "corrupt.out"
@@ -127,13 +185,13 @@ class TestOrcaFunctions(unittest.TestCase):
             self.assertIsNone(freqs)
             self.assertIsNone(intensities)
     
-    # Tests if function handles file open exceptions
+    # Verifies the function handles nonexistent files properly
     def test_parse_orca_output_file_error(self):
         freqs, intensities = parse_orca_output("nonexistent_file.out")
         self.assertIsNone(freqs)
         self.assertIsNone(intensities)
 
-    # Removes all generated ORCA files except .inp and .out
+    # Checks that auxiliary ORCA files are removed while keeping input and output files
     def test_cleanup_orca_files_removes_aux_files(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             keep = ["job.inp", "job.out"]
@@ -146,7 +204,7 @@ class TestOrcaFunctions(unittest.TestCase):
             for f in delete:
                 self.assertFalse(Path(tmpdir, f).exists())
     
-    # Tests if function properly handles file removal errors
+    # Ensures exceptions during file cleanup are caught and don't crash the program
     def test_cleanup_orca_files_exception_handling(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             Path(tmpdir, "job.gbw").write_text("mock")
@@ -158,6 +216,7 @@ class TestOrcaFunctions(unittest.TestCase):
                 except:
                     self.fail("cleanup_orca_files raised an exception!")
 
+    # Validates that invalid ORCA paths are handled properly
     def test_run_orca_invalid_path_handling(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             inp_file = Path(tmpdir) / "fail.inp"
@@ -165,7 +224,7 @@ class TestOrcaFunctions(unittest.TestCase):
             result = run_orca("bad_path.exe", str(inp_file), tmpdir)
             self.assertIsNone(result)
     
-    # Tests if function correctly executes ORCA with valid paths
+    # Checks that ORCA is executed correctly with valid paths and settings
     @patch('subprocess.run')
     def test_run_orca_successful_execution(self, mock_run):
         mock_run.return_value = MagicMock(returncode=0)
@@ -178,7 +237,7 @@ class TestOrcaFunctions(unittest.TestCase):
             self.assertTrue(result.endswith(".out"))
             mock_run.assert_called_once()
     
-    # Tests if plot_ir_spectrum correctly generates a figure with valid data
+    # Validates that a matplotlib figure is produced with proper labels from valid IR data
     def test_plot_ir_spectrum_valid_data(self):
         freqs = np.array([500.0, 1000.0, 1500.0])
         intensities = np.array([0.1, 0.5, 0.2])
@@ -189,7 +248,7 @@ class TestOrcaFunctions(unittest.TestCase):
         self.assertEqual(ax.get_xlabel(), "Wavenumber (cm⁻¹)")
         self.assertEqual(ax.get_ylabel(), "% Transmittance")
         
-    # Tests if name_to_smiles converts common molecule names to SMILES correctly
+    # Verifies chemical names are correctly converted to SMILES notation via PubChem
     @patch('pubchempy.get_compounds')
     def test_name_to_smiles_valid_name(self, mock_get_compounds):
         mock_compound = MagicMock()
@@ -200,28 +259,28 @@ class TestOrcaFunctions(unittest.TestCase):
         self.assertEqual(smiles, "CCO")
         mock_get_compounds.assert_called_once_with("ethanol", namespace='name')
     
-    # Tests if name_to_smiles returns None for invalid molecule names
+    # Ensures unknown chemical names return None instead of raising exceptions
     @patch('pubchempy.get_compounds')
     def test_name_to_smiles_invalid_name(self, mock_get_compounds):
         mock_get_compounds.return_value = []
         smiles = name_to_smiles("nonexistent_compound")
         self.assertIsNone(smiles)
     
-    # Tests if name_to_smiles handles exceptions from PubChem API
+    # Confirms that API exceptions from PubChem are handled gracefully
     @patch('pubchempy.get_compounds')
     def test_name_to_smiles_exception_handling(self, mock_get_compounds):
         mock_get_compounds.side_effect = Exception("API Error")
         smiles = name_to_smiles("ethanol")
         self.assertIsNone(smiles)
     
-    # Tests if mol_to_3dviewer creates a valid 3D viewer
+    # Validates that a 3D molecular viewer object is properly created from a molecule
     def test_mol_to_3dviewer(self):
         mol = generate_3d_molecule("CCO")
         viewer = mol_to_3dviewer(mol)
         self.assertIsNotNone(viewer)
         self.assertTrue(hasattr(viewer, '_make_html'))
     
-    # Tests if show_3dmol correctly renders HTML components
+    # Checks that the 3D molecular viewer HTML is correctly rendered
     @patch('streamlit.components.v1.html')
     def test_show_3dmol(self, mock_html):
         mock_viewer = MagicMock()
@@ -229,7 +288,7 @@ class TestOrcaFunctions(unittest.TestCase):
         show_3dmol(mock_viewer)
         mock_html.assert_called_once_with("<div>3D Viewer</div>", height=300)
     
-    # Tests if show_3dmol handles exceptions gracefully
+    # Ensures exceptions in 3D viewer creation are caught and don't crash the application
     @patch('streamlit.components.v1.html')
     def test_show_3dmol_exception_handling(self, mock_html):
         mock_viewer = MagicMock()
@@ -241,7 +300,7 @@ class TestOrcaFunctions(unittest.TestCase):
         except:
             self.fail("show_3dmol didn't handle the exception!")
 
-    # Tests if psi4_calculate_frequencies correctly extracts frequencies and intensities
+    # Verifies psi4 frequency calculations correctly extract vibrational frequencies and IR intensities
     @patch('psi4.frequency')
     def test_psi4_calculate_frequencies_successful(self, mock_frequency):
         mock_wfn = MagicMock()
@@ -261,7 +320,7 @@ class TestOrcaFunctions(unittest.TestCase):
         np.testing.assert_array_almost_equal(intensities, [0.1, 0.5, 0.2])
         self.assertTrue(ir_available)
     
-    # Tests if psi4_calculate_frequencies handles calculation errors
+    # Ensures psi4 calculation errors are handled gracefully without crashing
     @patch('psi4.frequency')
     def test_psi4_calculate_frequencies_error(self, mock_frequency):
         mock_frequency.side_effect = Exception("Psi4 error")
@@ -273,7 +332,7 @@ class TestOrcaFunctions(unittest.TestCase):
         self.assertIsNone(intensities)
         self.assertFalse(ir_available)
     
-    # Tests if psi4_calculate_frequencies handles missing IR intensities
+    # Validates that missing IR intensities in psi4 output are handled properly
     @patch('psi4.frequency')
     def test_psi4_calculate_frequencies_missing_ir(self, mock_frequency):
         mock_wfn = MagicMock()
@@ -292,7 +351,7 @@ class TestOrcaFunctions(unittest.TestCase):
         self.assertEqual(len(intensities), 3)
         self.assertFalse(ir_available)
     
-    # Tests if psi4_calculate_frequencies handles malformed IR data
+    # Checks that zero IR intensities are properly flagged as unavailable IR data
     @patch('psi4.frequency')
     def test_psi4_calculate_frequencies_malformed_ir(self, mock_frequency):
         mock_wfn = MagicMock()
@@ -310,6 +369,56 @@ class TestOrcaFunctions(unittest.TestCase):
         self.assertIsNotNone(intensities)
         self.assertEqual(len(intensities), 3)
         self.assertFalse(ir_available)
+    """"
+    # Tests if a valid ORCA output file is correctly parsed to extract IR frequencies and intensities
+    def test_parse_orca_output_valid(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            test_out = os.path.join(tmpdir, "test.out")
+            with open(test_out, 'w') as f:
+                f.write("""
+    """""
+    IR SPECTRUM
+    Mode    freq    intensity
+    1:      1000.0  50.0
+    2:      2000.0  30.0
+    """
+    """"""
+    """"
+            freqs, inten = parse_orca_output(test_out)
+            self.assertEqual(freqs, [1000.0, 2000.0])
+            self.assertEqual(inten, [50.0, 30.0])
+    """
+    """
+    # Verifies that small molecules are correctly optimized using psi4 geometry optimization
+    @patch('psi4.geometry')
+    def test_smiles_to_optimized_geometry_small_mol(self, mock_geo):
+        mock_geo.return_value = "mock_molecule"
+        mock_mol = MagicMock(spec=Chem.rdchem.Mol)
+        mock_mol.GetNumAtoms.return_value = 2
+        with patch('src.irs.QM_combiner.generate_3d_molecule', return_value=mock_mol):
+            # Note: Fixed function call to avoid non-existent module error
+            mol, rdkit_mol = smiles_to_optimized_geometry("CC", "HF/STO-3G")
+            self.assertEqual(mol, "mock_molecule")
+    """
+    # Tests if mol_to_3dviewer correctly configures the 3D viewer with proper styling
+    @patch('rdkit.Chem.MolToMolBlock')
+    @patch('py3Dmol.view')
+    def test_mol_to_3dviewer_configuration(self, mock_view, mock_to_molblock):
+        mock_mol = MagicMock()
+        mock_molblock = "MOCK MOLBLOCK"
+        mock_to_molblock.return_value = mock_molblock
+        mock_viewer = MagicMock()
+        mock_view.return_value = mock_viewer
+        
+        result = mol_to_3dviewer(mock_mol)
+        
+        mock_to_molblock.assert_called_once_with(mock_mol)
+        mock_view.assert_called_once_with(width=400, height=300)
+        mock_viewer.addModel.assert_called_once_with(mock_molblock, 'mol')
+        mock_viewer.setStyle.assert_called_once()
+        mock_viewer.setBackgroundColor.assert_called_once_with('white')
+        mock_viewer.zoomTo.assert_called_once()
+        self.assertEqual(result, mock_viewer)
 
 
 if __name__ == '__main__':
