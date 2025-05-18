@@ -111,6 +111,27 @@ Finally, to generate the IR spectrum, the following button must be clicked.
 </p>
 
 ## 🛠️ Installation
+1. ORCA installation:
+a) Download ORCA
+Visit the ORCA Forum and create an account or log in:
+https://orcaforum.kofo.mpg.de/app.php/portal
+Access Downloads: Navigate to the "Downloads" section.
+Download Files: For Windows, download the following three parts:
+orca_5_0_4_win64_part1.zip
+orca_5_0_4_win64_part2.zip
+orca_5_0_4_win64_part3.zip
+For Linux or macOS, download the corresponding ORCA tarball (.tar.xz) instead of the zip files.
+
+Note: The version numbers may vary; ensure you're downloading version 5.0.2 or newer.
+
+b) Extract Files
+Create Installation Directory: For example, C:\ORCA\.
+Extract Archives: Use a tool like WinRAR or 7-Zip to extract each of the three zip files into the installation directory. Ensure all files from the three parts are consolidated into the same folder.
+
+c) Set Up Output Directory
+Create Output Folder: For example, C:\temp\orca_output\. This directory will store ORCA's output files.
+   
+2. Package setup
 Pip install
 irspectrum-sim can be installed using pip
 ```bash
