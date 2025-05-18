@@ -137,7 +137,7 @@ For Linux or macOS, download the corresponding ORCA tarball (.tar.xz) instead of
 Extract Archives: <br>
 Use a tool like WinRAR or 7-Zip to extract each of the three zip files into the installation directory. Ensure all files from the three parts are consolidated into the same folder.
 
-2. Package setup <br>
+Package setup <br>
 Pip install
 irspectrum-sim can be installed using pip
 ```bash
