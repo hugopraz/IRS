@@ -4,23 +4,25 @@ import numpy as np
 import matplotlib.pyplot as plt
 from collections import Counter
 import os
-import json
 import pandas as pd
 import streamlit as st
+import json
+import importlib.resources
 
-json_path = os.path.join(os.path.dirname(__file__), "..", "..", "data", "dict_fg_IR_data.json")
-with open(json_path, "r", encoding="utf-8") as f:
+# Access dict_fg_IR_data.json
+with importlib.resources.files("irs.data").joinpath("dict_fg_IR_data.json").open("r", encoding="utf-8") as f:
     try:
         functional_groups_ir = json.load(f)
     except json.JSONDecodeError as e:
         raise ValueError(f"❌ Failed to decode JSON: {e}")
-    
-json_path_patters = os.path.join(os.path.dirname(__file__), "..", "..", "data", "dict_fg_detection.json")
-with open(json_path_patters, "r", encoding="utf-8") as f:
+
+# Access dict_fg_detection.json
+with importlib.resources.files("irs.data").joinpath("dict_fg_detection.json").open("r", encoding="utf-8") as f:
     try:
         FUNCTIONAL_GROUPS = json.load(f)
     except json.JSONDecodeError as e:
         raise ValueError(f"❌ Failed to decode JSON: {e}")
+
 
 flat_data = []
 

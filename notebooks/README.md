@@ -1,7 +1,5 @@
 ![Project Logo](assets/irs_logo.png)
 
-![Coverage Status](assets/coverage-badge.svg)
-
 <h1 align="center">
 IRS
 </h1>
@@ -17,17 +15,37 @@ The first one is the simulation of IR spectra using Psi4 and ORCA, two different
 [![EPFL Course](https://img.shields.io/badge/EPFL-red?style=for-the-badge)](https://edu.epfl.ch/coursebook/en/practical-programming-in-chemistry-CH-200)
 
 ## Contributors
-- Ryans Chen               [![GitHub](https://img.shields.io/badge/GitHub-ryanschen0-181717.svg?style=flat&logo=github)](https://github.com/ryanschen0)
-- Hugo Praz                [![GitHub](https://img.shields.io/badge/GitHub-hugopraz-181717.svg?style=flat&logo=github)](https://github.com/hugopraz)
-- Anders Thomas Eggen      [![GitHub](https://img.shields.io/badge/GitHub-Anders--Eggen-181717?style=for-the-badge&logo=github)](https://github.com/Anders-Eggen) 
+<div align="center">
 
-[![python3.10](https://img.shields.io/badge/Python-3.10-3776AB.svg?style=flat&logo=python&logoColor=orange)](https://www.python.org) [![LICENSE](https://img.shields.io/badge/License-MIT-purple.svg)](https://github.com/Flo-fllt/Projet_chem/blob/main/LICENSE.txt) 
+| Name                  | GitHub                                  |
+|-----------------------|------------------------------------------|
+| Ryans Chen            | [@ryanschen0](https://github.com/ryanschen0) ![GitHub](https://img.shields.io/badge/GitHub-ryanschen0-181717.svg?style=flat&logo=github) |
+| Hugo Praz             | [@hugopraz](https://github.com/hugopraz) ![GitHub](https://img.shields.io/badge/GitHub-hugopraz-181717.svg?style=flat&logo=github) |
+| Anders Thomas Eggen   | [@Anders-Eggen](https://github.com/Anders-Eggen) ![GitHub](https://img.shields.io/badge/GitHub-Anders--Eggen-181717?style=flat&logo=github) |
 
-Commit activity: [![Commit Activity](https://img.shields.io/badge/Commit%20Activity-View%20Graph-blue?style=for-the-badge&logo=github)](https://github.com/ryanschen0/IRS/graphs/commit-activity)
+</div>
 
-[![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/ThomasCsson/MASSIVEChem)
-[![Python](https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue)](https://www.python.org/)
-[![Anaconda](https://img.shields.io/badge/Anaconda-44A833.svg?&style=for-the-badge&logo=anaconda&logoColor=white)](https://www.anaconda.com/)
+<p align="center">
+  <a href="https://www.python.org">
+    <img src="https://img.shields.io/badge/Python-3.10-3776AB.svg?style=flat&logo=python&logoColor=orange" alt="Python 3.10">
+  </a>
+  <a href="https://github.com/Flo-fllt/Projet_chem/blob/main/LICENSE.txt">
+    <img src="https://img.shields.io/badge/License-MIT-purple.svg" alt="MIT License">
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/ryanschen0/IRS/graphs/commit-activity">Commit Activity</a>
+</p>
+
+<p align="center">
+  <a href="https://www.python.org/">
+    <img src="https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue" alt="Python">
+  </a>
+  <a href="https://www.anaconda.com/">
+    <img src="https://img.shields.io/badge/Anaconda-44A833.svg?&style=for-the-badge&logo=anaconda&logoColor=white" alt="Anaconda">
+  </a>
+</p>
 
 ## Theoretical Background of Infra-Red Spectroscopy
 QM Calculations using Psi4:
@@ -46,6 +64,8 @@ This method relies on an empirical, rule-based approach to approximate IR spectr
 
 
 ## Stack 
+<div align="center">
+
 | Component     | Library                 |
 | ------------- | ----------------------- |
 | Molecular Input/Output, Substructure Matching & Molecular Parsing | `PubChemPy`, `RDKit`    |
@@ -55,9 +75,40 @@ This method relies on an empirical, rule-based approach to approximate IR spectr
 | Interface     | `Streamlit`             |
 | Math / Logic  | `NumPy`                 |
 
+</div>
+
+
 
 ## 🔥 Usage
+Once the IR Spectrum Simulator page is open, the engine is ready to run. Below is a step-by-step example using ethanol to demonstrate how to use the web interface.
 
+<p align="center">
+  <img src="assets/image-1.png" alt="Web page picture 1"/>
+</p>
+
+By clicking on the arrow, the following tab will open.
+
+<p align="center">
+  <img src="assets/image-2.png" alt="Tab explanation"/>
+</p>
+
+In the case of ORCA, an additional ORCA Executable Path and Output Directory inputs need to be filled out, as shown below.
+
+<p align="center">
+  <img src="assets/image-3.png" alt="Tab of ORCA explanation"/>
+</p>
+
+In addition, a 3D molecular structure generator is included, which displays the total number of atoms, the molecular charge, and the spin multiplicity of the compound, as shown below.
+
+<p align="center">
+  <img src="assets/image-4.png" alt="3D molecule visualizer"/>
+</p>
+
+Finally, to generate the IR spectrum, the following button must be clicked.
+
+<p align="center">
+  <img src="assets/image-5.png" alt="IR spectrum Example"/>
+</p>
 
 ## 🛠️ Installation
 Pip install
@@ -124,13 +175,16 @@ pandas
 
 If the installation is successful, the packages mentionned above should all be installed automatically. However, this can be verified by checking if all have been installed in the desired environnement using the following commands:
 
-| Goal                                             | Command                      |
-|-----------------------------------------------|------------------------------|
-| Check if a specific package is installed      | `pip show irspectrum-sim`       |
-| See a list of all installed packages          | `pip list`                   |
-| Search for a package in the list (Linux/macOS)| `pip list \| grep irspectrum-sim`   |
-| Search for a package in the list (Windows)    | `pip list \| findstr irspectrum-sim`   |
+<div align="center">
 
+| Goal                                             | Command                             |
+|--------------------------------------------------|-------------------------------------|
+| Check if a specific package is installed         | `pip show irspectrum-sim`           |
+| See a list of all installed packages             | `pip list`                          |
+| Search for a package in the list (Linux/macOS)   | `pip list \| grep irspectrum-sim`   |
+| Search for a package in the list (Windows)       | `pip list \| findstr irspectrum-sim`|
+
+</div>
 
 ## Need help?
 If you encounter issues or the program doesn't work, try the following steps to troubleshoot:
