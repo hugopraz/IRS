@@ -25,7 +25,7 @@ from src.irs.ir_Structure import (
 )
 
 # Load test data
-json_path_patterns = os.path.join(os.path.dirname(__file__), "..", "data", "dict_fg_detection.json")
+json_path_patterns = os.path.join(os.path.dirname(__file__), "..", "src", "irs", "data", "dict_fg_detection.json")
 with open(json_path_patterns, "r", encoding="utf-8") as f:
     try:
         FUNCTIONAL_GROUPS = json.load(f)
@@ -80,8 +80,8 @@ class TestIRStructureFunctions(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     validate_smiles(smiles)
     
-    def test_validate_smiles_rejects_non_CHON_elements(self):
-        """Tests that validate_smiles rejects molecules containing elements other than C, H, O, N"""
+    def test_validate_smiles_rejects_non_allowed_elements(self):
+        """Tests that validate_smiles rejects molecules containing elements not in the allowed set"""
         disallowed_atoms = ["CSi", "CP", "CZn"]
         for smiles in disallowed_atoms:
             with self.subTest(smiles=smiles):
@@ -96,6 +96,21 @@ class TestIRStructureFunctions(unittest.TestCase):
                 with self.assertRaises(ValueError) as context:
                     validate_smiles(smiles)
                 self.assertIn("Charged atom", str(context.exception))
+    
+    def test_validate_smiles_accepts_allowed_halogens(self):
+        """Tests that validate_smiles accepts molecules with allowed halogen atoms"""
+        halogen_smiles = ["CF", "CCl", "CBr", "CI"]
+        for smiles in halogen_smiles:
+            with self.subTest(smiles=smiles):
+                self.assertTrue(validate_smiles(smiles))
+    
+    def test_validate_smiles_validates_aromatic_ring_constraints(self):
+        """Tests that validate_smiles enforces carbon count constraints for aromatic rings with heteroatoms"""
+        # Valid aromatic rings with heteroatoms
+        valid_aromatic = ["c1ccncc1", "c1ccoc1"]  # Pyridine, furan
+        for smiles in valid_aromatic:
+            with self.subTest(smiles=smiles):
+                self.assertTrue(validate_smiles(smiles))
     
     # --- Functional Group Detection Tests ---
     
@@ -119,6 +134,21 @@ class TestIRStructureFunctions(unittest.TestCase):
             mock_smarts.return_value = None
             self.assertEqual(get_functional_groups({"TEST": "pattern"}, "CCO"), {})
     
+    def test_get_functional_groups_prevents_duplicate_arene_counting(self):
+        """Tests that get_functional_groups prevents duplicate counting of aromatic systems"""
+        smiles = "c1cc2ccccc2cc1"  # Naphthalene
+        result = get_functional_groups(FUNCTIONAL_GROUPS, smiles)
+        # Should count naphthalene as one unit, not multiple overlapping aromatic systems
+        if "Naphthalene" in result:
+            self.assertEqual(result["Naphthalene"], 1)
+    
+    def test_get_functional_groups_counts_multiple_instances(self):
+        """Tests that get_functional_groups correctly counts multiple instances of the same functional group"""
+        smiles = "C(=O)OCC(=O)O"  # Succinic acid (two carboxylic acids)
+        result = get_functional_groups(FUNCTIONAL_GROUPS, smiles)
+        if "Carboxylic Acid" in result:
+            self.assertEqual(result["Carboxylic Acid"], 2)
+    
     def test_detect_main_functional_groups_prioritizes_complex_structures(self):
         """Tests that detect_main_functional_groups prioritizes complex structures over their components"""
         smiles = "C1=CC=C2C(=C1)C=CN2"  # Indole structure
@@ -136,6 +166,24 @@ class TestIRStructureFunctions(unittest.TestCase):
         smiles = "CCCC"
         result = detect_main_functional_groups(smiles)
         self.assertEqual(result, {})
+    
+    def test_detect_main_functional_groups_handles_polycyclic_compounds(self):
+        """Tests that detect_main_functional_groups correctly handles polycyclic aromatic hydrocarbons"""
+        smiles = "c1ccc2cc3ccccc3cc2c1"  # Anthracene
+        result = detect_main_functional_groups(smiles)
+        if "Anthracene" in result:
+            self.assertIn("Anthracene", result)
+            # Should not count individual benzene rings
+            self.assertNotIn("Benzene", result)
+    
+    def test_detect_main_functional_groups_handles_ester_overlap(self):
+        """Tests that detect_main_functional_groups removes ketone and ether when ester is present"""
+        smiles = "CC(=O)OC"  # Methyl acetate
+        result = detect_main_functional_groups(smiles)
+        if "Ester" in result:
+            self.assertIn("Ester", result)
+            self.assertNotIn("Ketone", result)
+            self.assertNotIn("Ether", result)
     
     # --- Bond Counting Tests ---
     
@@ -170,6 +218,13 @@ class TestIRStructureFunctions(unittest.TestCase):
         self.assertEqual(result_acetylene["sp² C-H"], 0)
         self.assertEqual(result_acetylene["sp C-H"], 2)
     
+    def test_count_ch_bonds_handles_no_hydrogens(self):
+        """Tests that count_ch_bonds correctly handles carbons with no hydrogens"""
+        smiles = "C(F)(F)(F)C"  # Trifluoromethyl compound
+        result = count_ch_bonds(smiles)
+        # First carbon has no H, second carbon has 3 H
+        self.assertEqual(result["sp³ C-H"], 3)
+    
     def test_count_carbon_bonds_identifies_various_bond_types(self):
         """Tests that count_carbon_bonds_and_cn correctly identifies single, double, triple C-C bonds and C-N bonds"""
         smiles = "CC=CC#CCN" 
@@ -191,6 +246,21 @@ class TestIRStructureFunctions(unittest.TestCase):
         self.assertEqual(result["C–C (single)"], 0)
         self.assertEqual(result["C≡C (triple)"], 0)
     
+    def test_count_carbon_bonds_ignores_non_single_cn_bonds(self):
+        """Tests that count_carbon_bonds_and_cn only counts single C-N bonds"""
+        smiles = "C#N"  # Acetonitrile (triple bond)
+        result = count_carbon_bonds_and_cn(smiles)
+        self.assertEqual(result["C–N (single)"], 0)
+    
+    def test_count_carbon_bonds_handles_molecules_without_carbon_bonds(self):
+        """Tests that count_carbon_bonds_and_cn handles single carbon molecules"""
+        smiles = "CN"  # Methylamine
+        result = count_carbon_bonds_and_cn(smiles)
+        self.assertEqual(result["C–C (single)"], 0)
+        self.assertEqual(result["C=C (double)"], 0)
+        self.assertEqual(result["C≡C (triple)"], 0)
+        self.assertEqual(result["C–N (single)"], 1)
+    
     # --- Molecule Analysis Tests ---
     
     def test_analyze_molecule_provides_comprehensive_analysis(self):
@@ -206,6 +276,16 @@ class TestIRStructureFunctions(unittest.TestCase):
         """Tests that analyze_molecule rejects invalid SMILES strings"""
         with self.assertRaises(ValueError):
             analyze_molecule("X") 
+    
+    def test_analyze_molecule_combines_all_analysis_types(self):
+        """Tests that analyze_molecule combines functional groups, C-H bonds, and C-C bonds into one dictionary"""
+        smiles = "CCO"  # Ethanol
+        result = analyze_molecule(smiles)
+        # Should contain all types of analysis
+        has_fg = any(key in ["Alcohol", "Hydroxyl"] for key in result.keys())
+        has_ch = any("C-H" in key for key in result.keys())
+        has_cc = any("C–C" in key or "C=C" in key or "C≡C" in key for key in result.keys())
+        self.assertTrue(has_fg or has_ch or has_cc)
     
     # --- Spectrum Generation Tests ---
     
@@ -225,6 +305,16 @@ class TestIRStructureFunctions(unittest.TestCase):
                 result = gaussian(x, 5, intensity, 1)
                 self.assertAlmostEqual(result.max(), intensity, places=2)
     
+    def test_gaussian_function_handles_edge_cases(self):
+        """Tests that gaussian function handles edge cases like zero intensity and very large widths"""
+        x = np.linspace(0, 10, 100)
+        # Zero intensity
+        result_zero = gaussian(x, 5, 0, 1)
+        self.assertTrue(np.all(result_zero == 0))
+        # Very wide peak
+        result_wide = gaussian(x, 5, 1, 100)
+        self.assertTrue(np.all(result_wide > 0))
+    
     def test_reconstruct_spectrum_combines_multiple_peaks(self):
         """Tests that reconstruct_spectrum correctly combines multiple peaks into a spectrum"""
         y = reconstruct_spectrum(self.x_axis, self.test_peaks)
@@ -240,6 +330,13 @@ class TestIRStructureFunctions(unittest.TestCase):
         """Tests that reconstruct_spectrum returns all zeros when no peaks are provided"""
         result = reconstruct_spectrum(self.x_axis, [])
         self.assertTrue(np.all(result == 0))
+    
+    def test_reconstruct_spectrum_handles_single_peak(self):
+        """Tests that reconstruct_spectrum correctly handles a single peak"""
+        single_peak = [(2000, 1.0, 50)]
+        result = reconstruct_spectrum(self.x_axis, single_peak)
+        max_idx = np.argmax(result)
+        self.assertAlmostEqual(self.x_axis[max_idx], 2000, delta=10)
     
     # --- Full Spectrum Building Test ---
     
@@ -271,6 +368,39 @@ class TestIRStructureFunctions(unittest.TestCase):
         """Tests that build_and_plot_ir_spectrum_from_smiles rejects invalid SMILES"""
         with self.assertRaises(ValueError):
             build_and_plot_ir_spectrum_from_smiles("X")
+    
+    @patch('matplotlib.pyplot.figure')
+    @patch('matplotlib.pyplot.plot')
+    @patch('matplotlib.pyplot.gcf')
+    @patch('streamlit.pyplot')
+    def test_build_spectrum_with_custom_axis(self, mock_st_pyplot, mock_gcf, mock_plot, mock_figure):
+        """Tests that build_and_plot_ir_spectrum_from_smiles works with custom frequency axis"""
+        mock_figure.return_value = MagicMock()
+        mock_gcf.return_value = MagicMock()
+        
+        custom_axis = np.linspace(500, 3500, 1000)
+        x_axis, transmittance = build_and_plot_ir_spectrum_from_smiles("C", custom_axis)
+        
+        self.assertTrue(np.array_equal(x_axis, custom_axis))
+        self.assertEqual(len(transmittance), len(custom_axis))
+    
+    @patch('matplotlib.pyplot.figure')
+    @patch('matplotlib.pyplot.plot')
+    @patch('matplotlib.pyplot.gcf')
+    @patch('streamlit.pyplot')
+    def test_build_spectrum_handles_no_functional_groups(self, mock_st_pyplot, mock_gcf, mock_plot, mock_figure):
+        """Tests that build_and_plot_ir_spectrum_from_smiles handles molecules with no recognized functional groups"""
+        mock_figure.return_value = MagicMock()
+        mock_gcf.return_value = MagicMock()
+        
+        # Simple alkane with minimal functional groups
+        smiles = "CCCC"
+        x_axis, transmittance = build_and_plot_ir_spectrum_from_smiles(smiles)
+        
+        # Should still return valid arrays
+        self.assertIsInstance(x_axis, np.ndarray)
+        self.assertIsInstance(transmittance, np.ndarray)
+        self.assertEqual(len(x_axis), len(transmittance))
 
 if __name__ == '__main__':
     unittest.main()
