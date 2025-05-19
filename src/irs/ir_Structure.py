@@ -107,8 +107,6 @@ def detect_main_functional_groups(smiles: str) -> dict:
     d = fg_counts.copy() 
 
     if "Indole" in d:
-        if "Benzene" in d:
-            d["Benzene"] = max(0, d["Benzene"] - d["Indole"])
         if "Pyrrole" in d:
             d["Pyrrole"] = max(0, d["Pyrrole"] - d["Indole"])
     if "Quinone" in d:
