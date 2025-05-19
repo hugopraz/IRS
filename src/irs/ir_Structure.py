@@ -50,7 +50,7 @@ def validate_smiles(smiles: str):
 
     mol = Chem.MolFromSmiles(smiles)
     if mol is None:
-        raise ValueError("Invalid SMILES string.")
+        raise ValueError("Invalid SMILES string")
 
     for atom in mol.GetAtoms():
         symbol = atom.GetSymbol()
@@ -68,7 +68,7 @@ def validate_smiles(smiles: str):
                 carbon_count = ring_symbols.count("C")
                 if carbon_count not in {5, 6}:
                     raise ValueError(
-                        f"Aromatic ring with heteroatoms (N or O) must have 5 or 6 carbon atoms. Found {carbon_count} C atoms in ring: {ring_symbols}"
+                        f"Aromatic ring with atoms (N or O) must have 5 or 6 carbon atoms. Found {carbon_count} C atoms in ring: {ring_symbols}"
                     )
 
     return True
@@ -106,19 +106,6 @@ def detect_main_functional_groups(smiles: str) -> dict:
 
     d = fg_counts.copy() 
 
-    if "Naphthalene" in d:
-        if "Benzene" in d:
-            d["Benzene"] = max(0, d["Benzene"] - 2 * d["Naphthalene"])
-    if "Anthracene" in d:
-        if "Benzene" in d:
-            d["Benzene"] = max(0, d["Benzene"] - 3 * d["Anthracene"])
-        if "Naphthalene" in d:
-            d["Naphthalene"] = max(0, d["Naphthalene"] - 2 * d["Anthracene"])
-    if "Phenanthrene" in d:
-        if "Benzene" in d:
-            d["Benzene"] = max(0, d["Benzene"] - 3 * d["Phenanthrene"])
-        if "Naphthalene" in d:
-            d["Naphthalene"] = max(0, d["Naphthalene"] - 2 * d["Phenanthrene"])
     if "Indole" in d:
         if "Benzene" in d:
             d["Benzene"] = max(0, d["Benzene"] - d["Indole"])
