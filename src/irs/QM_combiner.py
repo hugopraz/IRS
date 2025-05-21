@@ -387,82 +387,101 @@ if smiles:
     except Exception as e:
         st.error(f"Error processing molecule: {e}")
     
-    # Run calculations and plotting with selected engine
-    def handle_ir_calculation(smiles, engine, selected_method, orca_path, output_dir, freq_scale, peak_width, debug_mode):
+# Run calculations and plotting with psi4
+def handle_psi4_calculation(smiles, selected_method, freq_scale, peak_width, debug_mode):
+    try:
+        import psi4
+        molecule, rdkit_mol = cached_geometry_optimization(smiles, selected_method)
+        if molecule is not None:
+            freqs, intensities, elapsed_time, ir_available = psi4_calculate_frequencies(molecule, selected_method)
+            if freqs is not None:
+                st.success(f"✅ Found {len(freqs)} vibrational modes in {elapsed_time:.2f} seconds")
+                valid_idx = freqs > 0
+                valid_freqs = freqs[valid_idx]
+                valid_intensities = intensities[valid_idx]
+                fig = plot_ir_spectrum(valid_freqs, valid_intensities, sigma=peak_width, scale_factor=freq_scale)
+                st.pyplot(fig)
+            else:
+                st.error("❌ Failed to calculate frequencies")
+        else:
+            st.error("❌ Failed to optimize geometry")
+    except ImportError:
+        st.error("❌ Psi4 is not installed. Please install it to use this feature.")
+    except Exception as e:
+        st.error(f"❌ Error during Psi4 calculation: {e}")
 
-        if engine == "Psi4":
-            try:
-                import psi4
-                molecule, rdkit_mol = cached_geometry_optimization(smiles, selected_method)
-                if molecule is not None:
-                    freqs, intensities, elapsed_time, ir_available = psi4_calculate_frequencies(molecule, selected_method)
-                    if freqs is not None:
+def handle_orca_calculation(smiles, selected_method, orca_path, output_dir, freq_scale, peak_width, debug_mode):
+    try:
+        if not os.path.exists(orca_path):
+            st.error(f"❌ ORCA executable not found at: {orca_path}")
+        else:
+            os.makedirs(output_dir, exist_ok=True)
+            mol = generate_3d_molecule(smiles)
+            if mol is None:
+                st.error("❌ Failed to generate 3D structure")
+            else:
+                job_name = f"ir_calc_{int(time.time())}"
+                charge, multiplicity = guess_charge_multiplicity(mol)
+                st.info(f"⚙️ Preparing ORCA calculation with {selected_method}")
+                inp_path = write_orca_input(mol, output_dir, job_name, selected_method, charge, multiplicity)
+                st.info("🔬 Running ORCA calculation (this may take a while)...")
+                start_time = time.time()
+                out_path = run_orca(orca_path, inp_path, output_dir)
+                elapsed_time = time.time() - start_time
+                if out_path:
+                    st.info("📊 Parsing ORCA output...")
+                    freqs, intensities = parse_orca_output(out_path)
+                    if freqs is not None and len(freqs) > 0:
                         st.success(f"✅ Found {len(freqs)} vibrational modes in {elapsed_time:.2f} seconds")
                         valid_idx = freqs > 0
                         valid_freqs = freqs[valid_idx]
                         valid_intensities = intensities[valid_idx]
                         fig = plot_ir_spectrum(valid_freqs, valid_intensities, sigma=peak_width, scale_factor=freq_scale)
                         st.pyplot(fig)
+                        if not debug_mode:
+                            cleanup_orca_files(output_dir, job_name)
                     else:
-                        st.error("❌ Failed to calculate frequencies")
+                        st.error("❌ No frequencies found in ORCA output")
                 else:
-                    st.error("❌ Failed to optimize geometry")
-            except ImportError:
-                st.error("❌ Psi4 is not installed. Please install it to use this feature.")
-            except Exception as e:
-                st.error(f"❌ Error during Psi4 calculation: {e}")
+                    st.error("❌ ORCA calculation failed")
+    except Exception as e:
+        st.error(f"❌ Error during ORCA calculation: {e}")
 
-        elif engine == "ORCA":
-            try:
-                if not os.path.exists(orca_path):
-                    st.error(f"❌ ORCA executable not found at: {orca_path}")
-                else:
-                    os.makedirs(output_dir, exist_ok=True)
-                    mol = generate_3d_molecule(smiles)
-                    if mol is None:
-                        st.error("❌ Failed to generate 3D structure")
-                    else:
-                        job_name = f"ir_calc_{int(time.time())}"
-                        charge, multiplicity = guess_charge_multiplicity(mol)
-                        st.info(f"⚙️ Preparing ORCA calculation with {selected_method}")
-                        inp_path = write_orca_input(mol, output_dir, job_name, selected_method, charge, multiplicity)
-                        st.info("🔬 Running ORCA calculation (this may take a while)...")
-                        start_time = time.time()
-                        out_path = run_orca(orca_path, inp_path, output_dir)
-                        elapsed_time = time.time() - start_time
-                        if out_path:
-                            st.info("📊 Parsing ORCA output...")
-                            freqs, intensities = parse_orca_output(out_path)
-                            if freqs is not None and len(freqs) > 0:
-                                st.success(f"✅ Found {len(freqs)} vibrational modes in {elapsed_time:.2f} seconds")
-                                valid_idx = freqs > 0
-                                valid_freqs = freqs[valid_idx]
-                                valid_intensities = intensities[valid_idx]
-                                fig = plot_ir_spectrum(valid_freqs, valid_intensities, sigma=peak_width, scale_factor=freq_scale)
-                                st.pyplot(fig)
-                                if not debug_mode:
-                                    cleanup_orca_files(output_dir, job_name)
-                            else:
-                                st.error("❌ No frequencies found in ORCA output")
-                        else:
-                            st.error("❌ ORCA calculation failed")
-            except Exception as e:
-                st.error(f"❌ Error during ORCA calculation: {e}")
+def handle_functional_groups_calculation(smiles):
+    try:
+        st.info("🔬 Building spectrum using functional group contributions...")
+        build_and_plot_ir_spectrum_from_smiles(smiles)
+        st.success("✅ Functional group-based IR spectrum simulated.")
+    except Exception as e:
+        st.error(f"❌ Functional group spectrum simulation failed: {e}")
 
-        else:
-            try:
-                st.info("🔬 Building spectrum using functional group contributions...")
-                build_and_plot_ir_spectrum_from_smiles(smiles)
-                st.success("✅ Functional group-based IR spectrum simulated.")
-            except Exception as e:
-                st.error(f"❌ Functional group spectrum simulation failed: {e}")
-    if st.button("Run IR Calculation"):  # pragma: no cover
-        with st.spinner(f"🔬 Running {engine} calculation for {selected_method}..."):  # pragma: no cover
+# Main handler function that calls the appropriate calculation function based on engine
+def handle_ir_calculation(smiles, engine, selected_method, freq_scale, peak_width, debug_mode, orca_path=None, output_dir=None):
+    if engine == "Psi4":
+        handle_psi4_calculation(smiles, selected_method, freq_scale, peak_width, debug_mode)
+    elif engine == "ORCA":
+        if orca_path is None or output_dir is None:
+            st.error("❌ ORCA calculation requires specifying orca_path and output_dir")
+            return
+        handle_orca_calculation(smiles, selected_method, orca_path, output_dir, freq_scale, peak_width, debug_mode)
+    else:
+        handle_functional_groups_calculation(smiles)
+
+
+if st.button("Run IR Calculation"):  # pragma: no cover
+    with st.spinner(f"🔬 Running {engine} calculation for {selected_method}..."):  # pragma: no cover
+        if engine == "ORCA":
             handle_ir_calculation(
                 smiles, engine, selected_method,
-                orca_path, output_dir,
+                freq_scale, peak_width, debug_mode,
+                orca_path=orca_path, output_dir=output_dir
+            )
+        else:
+            handle_ir_calculation(
+                smiles, engine, selected_method,
                 freq_scale, peak_width, debug_mode
             )
+
 st.sidebar.markdown("---")
 st.sidebar.caption("Note: All calculations are performed locally using your installed quantum chemistry packages.")
 st.sidebar.caption("References: Psi4 (https://psicode.org) and ORCA (https://orcaforum.kofo.mpg.de)")

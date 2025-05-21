@@ -86,7 +86,7 @@ class TestIRStructureFunctions(unittest.TestCase):
     def test_validate_smiles_aromatic_ring_constraints(self):
         with self.assertRaises(ValueError) as context:
             validate_smiles("c1cno1")
-        self.assertIn("Invalid SMILES", str(context.exception))
+        self.assertIn("Aromatic ring with atoms (N or O)", str(context.exception))
 
         with self.assertRaises(ValueError) as context:
             validate_smiles("c1ccoc1")

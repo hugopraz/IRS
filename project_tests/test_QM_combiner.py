@@ -30,7 +30,9 @@ from src.irs.QM_combiner import (
     show_3dmol, 
     build_and_plot_ir_spectrum_from_smiles, 
     smiles_to_optimized_geometry,
-    handle_ir_calculation
+    handle_psi4_calculation, 
+    handle_functional_groups_calculation,
+    handle_orca_calculation
 )
 
 # Mock classes for testing
@@ -539,61 +541,70 @@ class TestOrcaFunctions(unittest.TestCase):
         finally:
             os.unlink(temp_file)
 
-    # Tests that handle_ir_calculation successfully processes Psi4 frequency calculations
+# Test directly the handle_psi4_calculation function
     @patch("src.irs.QM_combiner.st")
     @patch("src.irs.QM_combiner.cached_geometry_optimization")
     @patch("src.irs.QM_combiner.psi4_calculate_frequencies")
     @patch("src.irs.QM_combiner.plot_ir_spectrum")
-    def test_psi4_path_success(self, mock_plot, mock_calc, mock_opt, mock_st):
+    def test_handle_psi4_calculation(self, mock_plot, mock_calc, mock_opt, mock_st):
         from unittest.mock import MagicMock
         import numpy as np
-
+        
         mock_opt.return_value = (MagicMock(), MagicMock())
-
+        
         mock_calc.return_value = (
             np.array([1000.0, 1500.0]),
             np.array([0.5, 0.7]),
             1.23,
             True
         )
-
+        
         mock_plot.return_value = MagicMock()
-
-        handle_ir_calculation(
+        
+        handle_psi4_calculation(
             smiles="CCO",
-            engine="Psi4",
             selected_method="HF/STO-3G",
-            orca_path="",
-            output_dir="",
             freq_scale=1.0,
             peak_width=20,
             debug_mode=True
         )
-
+        
         mock_plot.assert_called_once()
-
-    # Tests that handle_ir_calculation successfully processes ORCA frequency calculations
+        mock_st.success.assert_called()
+    
+    # Test directly the handle_orca_calculation function
     @patch("src.irs.QM_combiner.plot_ir_spectrum")
     @patch("src.irs.QM_combiner.parse_orca_output")
     @patch("src.irs.QM_combiner.run_orca")
     @patch("src.irs.QM_combiner.write_orca_input")
+    @patch("src.irs.QM_combiner.guess_charge_multiplicity")
     @patch("src.irs.QM_combiner.generate_3d_molecule")
-    @patch("src.irs.QM_combiner.st.text_input")
+    @patch("src.irs.QM_combiner.st")
     @patch("src.irs.QM_combiner.os.path.exists")
-    def test_orca_path_success(self, mock_exists, mock_st, mock_gen, mock_write, mock_run, mock_parse, mock_plot):
+    @patch("src.irs.QM_combiner.os.makedirs")
+    def test_handle_orca_calculation(self, mock_makedirs, mock_exists, mock_st, mock_gen, 
+                                    mock_guess, mock_write, mock_run, mock_parse, mock_plot):
+        import numpy as np
+        
+        mock_exists.return_value = True
+        
         mol = Chem.MolFromSmiles("CCO")
         mock_gen.return_value = mol
+        
+        mock_guess.return_value = (0, 1)  # Charge, multiplicity
+        
         mock_write.return_value = "fake_path.inp"
         mock_run.return_value = "fake_path.out"
+        
         mock_parse.return_value = (
-            [1000.0, 2000.0],  
-            [1.0, 0.8]         
+            np.array([1000.0, 2000.0]),
+            np.array([1.0, 0.8])
         )
+        
         mock_plot.return_value = MagicMock()
-
-        handle_ir_calculation(
+        
+        handle_orca_calculation(
             smiles="CCO",
-            engine="ORCA",
             selected_method="B3LYP/def2-SVP",
             orca_path="fake_orca_path",
             output_dir="./fake_dir",
@@ -601,23 +612,17 @@ class TestOrcaFunctions(unittest.TestCase):
             peak_width=25,
             debug_mode=True
         )
+        
         mock_run.assert_called_once()
-
-    # Tests that handle_ir_calculation successfully processes functional_groups frequency calculations
+        mock_plot.assert_called_once()
+    
+    # Test directly the handle_functional_groups_calculation function
     @patch("src.irs.QM_combiner.st")
     @patch("src.irs.QM_combiner.build_and_plot_ir_spectrum_from_smiles")
-    def test_functional_group_success(self, mock_build, mock_st):
-        handle_ir_calculation(
-            smiles="CCO",
-            engine="Functional groups",
-            selected_method="Functional Group",
-            orca_path="",
-            output_dir="",
-            freq_scale=1.0,
-            peak_width=20,
-            debug_mode=False
-        )
+    def test_handle_functional_groups_calculation(self, mock_build, mock_st):
+        handle_functional_groups_calculation(smiles="CCO")
+        
         mock_build.assert_called_once_with("CCO")
-
+        mock_st.success.assert_called_once()
 if __name__ == '__main__':
     unittest.main()
