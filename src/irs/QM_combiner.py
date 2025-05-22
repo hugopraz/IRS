@@ -57,7 +57,7 @@ with st.sidebar:
         orca_path = st.text_input("ORCA Executable Path:", "C:/ORCA/orca.exe")
         output_dir = st.text_input("Output Directory:", "C:/temp/orca_output")
 
-    # Width/ Frequency scaling
+    # Width/ Frequency scaling, to be used in the plot and to visualize certain peaks
     st.subheader("Spectrum Settings")
     peak_width = st.slider("Peak Width (σ):", 5, 50, 20)
     freq_scale = st.slider("Frequency Scaling Factor:", 0.8, 1.1, 0.97)
@@ -116,7 +116,7 @@ def show_3dmol(viewer):
     except Exception as e:
         st.warning(f"⚠️ 3D viewer failed: {e}")
 
-# IR-sepctra plotting function
+# IR-spectra plotting function, setting default parameters for sigma and scale_factor, and using a default x-axis range
 def plot_ir_spectrum(freqs, intensities, sigma=20, scale_factor=0.97):
     """Plot IR spectrum from frequencies and intensities"""
     scaled_freqs = [f * scale_factor for f in freqs]
@@ -172,7 +172,7 @@ units angstrom
     try:
         if mol.GetNumAtoms() >= 3:
             st.info("⚙️ Optimizing geometry using QM method...")
-            psi4.set_memory('2 GB')
+            psi4.set_memory('3 GB')
             psi4.core.set_output_file('output.dat', False)
             energy, opt_wfn = psi4.optimize(method, molecule=molecule, return_wfn=True)
             st.success("✅ QM geometry optimization complete.")
