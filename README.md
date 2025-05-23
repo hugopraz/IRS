@@ -16,6 +16,7 @@ The first simulates IR spectra using Psi4 and ORCA, two quantum mechanical calcu
     <img src="https://img.shields.io/badge/EPFL-red?style=for-the-badge" alt="EPFL Course">
   </a>
 </div>
+
 ## Contributors
 <div align="center">
 
