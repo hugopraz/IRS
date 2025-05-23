@@ -410,6 +410,7 @@ def handle_psi4_calculation(smiles, selected_method, freq_scale, peak_width, deb
     except Exception as e:
         st.error(f"❌ Error during Psi4 calculation: {e}")
 
+# Run calculations and plotting with ORCA
 def handle_orca_calculation(smiles, selected_method, orca_path, output_dir, freq_scale, peak_width, debug_mode):
     try:
         if not os.path.exists(orca_path):
@@ -447,6 +448,7 @@ def handle_orca_calculation(smiles, selected_method, orca_path, output_dir, freq
     except Exception as e:
         st.error(f"❌ Error during ORCA calculation: {e}")
 
+# Run calculations and plotting with functional groups
 def handle_functional_groups_calculation(smiles):
     try:
         st.info("🔬 Building spectrum using functional group contributions...")

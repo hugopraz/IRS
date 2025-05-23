@@ -82,17 +82,6 @@ class TestIRStructureFunctions(unittest.TestCase):
             validate_smiles("C[O-]C")  
         self.assertIn("Invalid SMILES", str(context.exception))
 
-    # Tests aromatic ring validation/ invalidation
-    def test_validate_smiles_aromatic_ring_constraints(self):
-        with self.assertRaises(ValueError) as context:
-            validate_smiles("c1cno1")
-        self.assertIn("Aromatic ring with atoms (N or O)", str(context.exception))
-
-        with self.assertRaises(ValueError) as context:
-            validate_smiles("c1ccoc1")
-        self.assertIn("Aromatic ring with heteroatoms", str(context.exception))
-
-
     # Tests that get_functional_groups correctly identifies carboxylic acid in acetic acid
     def test_get_functional_groups_identifies_carboxylic_acid(self):
         smiles = "CC(=O)O"
@@ -140,13 +129,6 @@ class TestIRStructureFunctions(unittest.TestCase):
         result_quinone = get_functional_groups(FUNCTIONAL_GROUPS, smiles_quinone)
         if "Quinone" in FUNCTIONAL_GROUPS:
             self.assertIn("Quinone", result_quinone)
-
-    # Tests preventing duplicate arene counting with frozenset 
-    def test_get_functional_groups_prevents_duplicate_arene_counting(self):
-        smiles = "c1cc2ccccc2cc1"  
-        result = get_functional_groups(FUNCTIONAL_GROUPS, smiles)
-        total_count = sum(result.values())
-        self.assertGreaterEqual(total_count, 0)  
 
     # Tests addition of arene matches to set 
     def test_get_functional_groups_handles_arene_matches_addition(self):

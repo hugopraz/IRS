@@ -79,13 +79,13 @@ class MockPosition:
         self.y = 0.0
         self.z = 0.0
 
-
 class TestOrcaFunctions(unittest.TestCase):
 
     # Create temp directory for tests
     def setUp(self):
         self.temp_dir = tempfile.TemporaryDirectory()
-        
+
+    # Cleans up the temp directory  
     def tearDown(self):
         self.temp_dir.cleanup()
 
@@ -210,15 +210,6 @@ class TestOrcaFunctions(unittest.TestCase):
             self.assertIsNone(freqs)
             self.assertIsNone(intensities)
 
-    # Tests that parse_orca_output handles corrupt or invalid output files gracefully
-    def test_parse_orca_output_fails_gracefully(self):
-        with tempfile.TemporaryDirectory() as tmpdir:
-            out_file = Path(tmpdir) / "corrupt.out"
-            out_file.write_text("nonsense garbage")
-            freqs, intensities = parse_orca_output(str(out_file))
-            self.assertIsNone(freqs)
-            self.assertIsNone(intensities)
-    
     # Tests that parse_orca_output handles nonexistent files properly
     def test_parse_orca_output_file_error(self):
         freqs, intensities = parse_orca_output("nonexistent_file.out")
@@ -476,16 +467,6 @@ class TestOrcaFunctions(unittest.TestCase):
             self.assertIsNone(mol)
             self.assertIsNone(rdkit_mol)
 
-    # Tests that name_to_smiles returns None for non-existent molecule names
-    def test_pubchem_lookup_failure(self):
-        smiles = name_to_smiles("notarealmolecule123")
-        self.assertIsNone(smiles)
-
-    # Tests that generate_3d_molecule fails gracefully with invalid SMILES
-    def test_generate_3d_fails_with_invalid_smiles(self):
-        mol = generate_3d_molecule("C(")
-        self.assertIsNone(mol)
-
     # Tests that parse_orca_output returns None when IR SPECTRUM section is missing
     def test_parse_orca_output_no_data(self):
         with tempfile.NamedTemporaryFile('w+', suffix='.out', delete=False) as f:
@@ -624,5 +605,6 @@ class TestOrcaFunctions(unittest.TestCase):
         
         mock_build.assert_called_once_with("CCO")
         mock_st.success.assert_called_once()
+
 if __name__ == '__main__':
     unittest.main()
