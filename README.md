@@ -11,6 +11,7 @@ IRS – Infra-Red Simulator – is a Python-based application developed for the 
 
 The project provides two main functionalities, offering two different approaches.
 The first simulates IR spectra using Psi4 and ORCA, two quantum mechanical calculation packages. The second, a structural approach, generates an approximate IR spectrum by analyzing the molecular structure to identify key functional groups, C–H bonds (classified by hybridization, e.g., sp³ C–H), and C–C bonds (e.g., C=C). The characteristic absorption peaks for each feature are then combined to construct the overall spectrum.
+
 <div style="text-align: center;">
   <a href="https://edu.epfl.ch/coursebook/en/practical-programming-in-chemistry-CH-200">
     <img src="https://img.shields.io/badge/EPFL-red?style=for-the-badge" alt="EPFL Course">
