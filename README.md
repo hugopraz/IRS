@@ -11,9 +11,11 @@ IRS – Infra-Red Simulator – is a Python-based application developed for the 
 
 The project provides two main functionalities, offering two different approaches.
 The first simulates IR spectra using Psi4 and ORCA, two quantum mechanical calculation packages. The second, a structural approach, generates an approximate IR spectrum by analyzing the molecular structure to identify key functional groups, C–H bonds (classified by hybridization, e.g., sp³ C–H), and C–C bonds (e.g., C=C). The characteristic absorption peaks for each feature are then combined to construct the overall spectrum.
-
-[![EPFL Course](https://img.shields.io/badge/EPFL-red?style=for-the-badge)](https://edu.epfl.ch/coursebook/en/practical-programming-in-chemistry-CH-200)
-
+<div style="text-align: center;">
+  <a href="https://edu.epfl.ch/coursebook/en/practical-programming-in-chemistry-CH-200">
+    <img src="https://img.shields.io/badge/EPFL-red?style=for-the-badge" alt="EPFL Course">
+  </a>
+</div>
 ## Contributors
 <div align="center">
 
@@ -35,7 +37,7 @@ The first simulates IR spectra using Psi4 and ORCA, two quantum mechanical calcu
 </p>
 
 <p align="center">
-  <p><strong>Commit activity:</strong> <a href="https://github.com/ryanschen0/IRS/graphs/commit-activity">link</a></p>
+  <strong>Commit activity:</strong> <a href="https://github.com/ryanschen0/IRS/graphs/commit-activity">link</a>
 </p>
 
 <p align="center">
@@ -46,6 +48,7 @@ The first simulates IR spectra using Psi4 and ORCA, two quantum mechanical calcu
     <img src="https://img.shields.io/badge/Anaconda-44A833.svg?&style=for-the-badge&logo=anaconda&logoColor=white" alt="Anaconda">
   </a>
 </p>
+
 
 ## Theoretical Background of Infra-Red Spectroscopy
 QM calculations using Psi4:
@@ -123,7 +126,6 @@ Install via pip using the following command:
 pip install git+https://github.com/ryanschen0/IRS
 ```
 
-Git
 The package can also be installed from the GitHub repository.
 Using this method, it is advised to create a CONDA environement fist:
 ```bash
@@ -153,7 +155,8 @@ QM Approach: Psi4
 rdkit (>= 2022.9.5)
 Psi4
 Matplotlib
-NumPy
+numpy (>=1.21.0, <2.0.0)
+streamlit
 ```
 
 QM Approach: ORCA
@@ -162,6 +165,7 @@ rdkit (>= 2022.09.1)
 numpy (>=1.21.0, <2.0.0)
 matplotlib (>=3.4.0)
 subprocess
+streamlit
 ```
 This method also requires the installation of ORCA (>= 5.0.2).
 
