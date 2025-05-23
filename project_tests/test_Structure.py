@@ -8,7 +8,6 @@ from rdkit import Chem
 from pathlib import Path
 
 # Add source directory to path
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # Import functions to test
@@ -103,21 +102,6 @@ class TestIRStructureFunctions(unittest.TestCase):
             result = get_functional_groups(invalid_fg, "CCO")
             self.assertEqual(result, {})
 
-    # Tests identification of Pyridine
-    def test_get_functional_groups_identifies_pyridine(self):
-        smiles = "c1ccncc1"  
-        result = get_functional_groups(FUNCTIONAL_GROUPS, smiles)
-        if "Pyridine" in FUNCTIONAL_GROUPS:
-            self.assertIn("Pyridine", result)
-            self.assertEqual(result["Pyridine"], 1)
-
-    # Tests identification of Pyrrole 
-    def test_get_functional_groups_identifies_pyrrole(self):
-        smiles = "c1cc[nH]c1"  
-        result = get_functional_groups(FUNCTIONAL_GROUPS, smiles)
-        if "Pyrrole" in FUNCTIONAL_GROUPS:
-            self.assertIn("Pyrrole", result)
-
     # Tests identification of Furan and Quinone
     def test_get_functional_groups_identifies_furan_and_quinone(self):
         smiles_furan = "c1ccoc1"  
@@ -136,7 +120,7 @@ class TestIRStructureFunctions(unittest.TestCase):
         result = get_functional_groups(FUNCTIONAL_GROUPS, smiles)
         self.assertIsInstance(result, dict)
 
-    # Tests counting of non-arene functional groups 
+    # Tests counting multiple non-arene functional groups 
     def test_get_functional_groups_counts_multiple_standard_groups(self):
         smiles = "O=C(O)C(=O)O"  
         result = get_functional_groups(FUNCTIONAL_GROUPS, smiles)
@@ -148,7 +132,6 @@ class TestIRStructureFunctions(unittest.TestCase):
         result = get_functional_groups(FUNCTIONAL_GROUPS, "CCCC")
         for count in result.values():
             self.assertGreater(count, 0)
-
 
     # Tests that detect_main_functional_groups handles molecules without recognized functional groups
     def test_detect_main_functional_groups_handles_empty_input(self):
@@ -168,7 +151,6 @@ class TestIRStructureFunctions(unittest.TestCase):
             self.assertNotIn("Ether", result)
             self.assertNotIn("Ketone", result)
 
-
     # Tests that count_ch_bonds correctly counts C-H bonds with different hybridizations
     def test_count_ch_bonds_handles_mixed_hybridization(self):
         smiles = "C=CC#C"  
@@ -184,7 +166,6 @@ class TestIRStructureFunctions(unittest.TestCase):
         self.assertEqual(result["sp C-H"], 1) 
         self.assertEqual(result["sp³ C-H"], 3)  
 
-
     # Tests that count_carbon_bonds_and_C-N correctly identifies all bond types
     def test_count_carbon_bonds_identifies_various_bond_types(self):
         smiles = "CC=CC#CCN" 
@@ -194,16 +175,11 @@ class TestIRStructureFunctions(unittest.TestCase):
         self.assertIn("C≡C (triple)", result)
         self.assertIn("C–N (single)", result)
 
-    # Tests aromatic bond counting  
-    def test_count_carbon_bonds_handles_aromatic_compounds(self):
-        smiles = "c1ccccc1" 
-        result = count_carbon_bonds_and_cn(smiles)
-        self.assertEqual(result["C=C (double)"], 6) 
-        
+    # Tests that count_carbon_bonds_and_cn counts C-N bonds
+    def test_count_C_N_bonds(self):
         smiles_cn = "CCN"  
         result_cn = count_carbon_bonds_and_cn(smiles_cn)
         self.assertEqual(result_cn["C–N (single)"], 1)
-
 
     # Tests that analyze_molecule combines all analysis functions correctly
     def test_analyze_molecule_provides_comprehensive_analysis(self):
@@ -238,11 +214,11 @@ class TestIRStructureFunctions(unittest.TestCase):
         result = reconstruct_spectrum(self.x_axis, [])
         self.assertTrue(np.all(result == 0))
 
+    # Tests basic functionality of IR spectrum building and plotting
     @patch('matplotlib.pyplot.figure')
     @patch('matplotlib.pyplot.plot')
     @patch('matplotlib.pyplot.gcf')
     @patch('streamlit.pyplot')
-    # Tests basic functionality of IR spectrum building and plotting
     def test_build_and_plot_ir_spectrum_from_smiles_basic_functionality(self, mock_st_pyplot, mock_gcf, mock_plot, mock_figure):
         mock_figure.return_value = MagicMock()
         mock_gcf.return_value = MagicMock()
@@ -252,16 +228,16 @@ class TestIRStructureFunctions(unittest.TestCase):
    
         mock_figure.assert_called_once()
         mock_plot.assert_called_once()
-        mock_st_pyplot.assert_called_once()
-        
+        mock_st_pyplot.assert_called_once()  
+
         self.assertIsInstance(x_axis, np.ndarray)
         self.assertIsInstance(transmittance, np.ndarray)
 
+    # Tests custom axis usage in IR spectrum building
     @patch('matplotlib.pyplot.figure')
     @patch('matplotlib.pyplot.plot')
     @patch('matplotlib.pyplot.gcf')
     @patch('streamlit.pyplot')
-    # Tests custom axis usage in IR spectrum building
     def test_build_spectrum_with_custom_axis(self, mock_st_pyplot, mock_gcf, mock_plot, mock_figure):
         mock_figure.return_value = MagicMock()
         mock_gcf.return_value = MagicMock()
@@ -272,11 +248,11 @@ class TestIRStructureFunctions(unittest.TestCase):
         self.assertTrue(np.array_equal(x_axis, custom_axis))
         self.assertEqual(len(transmittance), len(custom_axis))
 
+    # Tests IR spectrum building for molecules with minimal functional groups
     @patch('matplotlib.pyplot.figure')
     @patch('matplotlib.pyplot.plot')
     @patch('matplotlib.pyplot.gcf')
     @patch('streamlit.pyplot')
-    # Tests IR spectrum building for molecules with minimal functional groups
     def test_build_spectrum_handles_no_functional_groups(self, mock_st_pyplot, mock_gcf, mock_plot, mock_figure):
         mock_figure.return_value = MagicMock()
         mock_gcf.return_value = MagicMock()

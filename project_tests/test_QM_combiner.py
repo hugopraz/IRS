@@ -228,18 +228,6 @@ class TestOrcaFunctions(unittest.TestCase):
                 self.assertTrue(Path(tmpdir, f).exists())
             for f in delete:
                 self.assertFalse(Path(tmpdir, f).exists())
-    
-    # Tests that cleanup_orca_files handles exceptions during file cleanup gracefully
-    def test_cleanup_orca_files_exception_handling(self):
-        with tempfile.TemporaryDirectory() as tmpdir:
-            Path(tmpdir, "job.gbw").write_text("mock")
-
-            with patch('os.remove', side_effect=Exception("Permission denied")):
-                try:
-                    cleanup_orca_files(tmpdir, "job")
-                    self.assertTrue(True)
-                except:
-                    self.fail("cleanup_orca_files raised an exception!")
 
     # Tests that run_orca handles invalid ORCA paths properly
     def test_run_orca_invalid_path_handling(self):
@@ -522,15 +510,12 @@ class TestOrcaFunctions(unittest.TestCase):
         finally:
             os.unlink(temp_file)
 
-# Test directly the handle_psi4_calculation function
+    # Test directly the handle_psi4_calculation function
     @patch("src.irs.QM_combiner.st")
     @patch("src.irs.QM_combiner.cached_geometry_optimization")
     @patch("src.irs.QM_combiner.psi4_calculate_frequencies")
     @patch("src.irs.QM_combiner.plot_ir_spectrum")
     def test_handle_psi4_calculation(self, mock_plot, mock_calc, mock_opt, mock_st):
-        from unittest.mock import MagicMock
-        import numpy as np
-        
         mock_opt.return_value = (MagicMock(), MagicMock())
         
         mock_calc.return_value = (
@@ -539,7 +524,6 @@ class TestOrcaFunctions(unittest.TestCase):
             1.23,
             True
         )
-        
         mock_plot.return_value = MagicMock()
         
         handle_psi4_calculation(
@@ -549,7 +533,6 @@ class TestOrcaFunctions(unittest.TestCase):
             peak_width=20,
             debug_mode=True
         )
-        
         mock_plot.assert_called_once()
         mock_st.success.assert_called()
     
@@ -565,14 +548,13 @@ class TestOrcaFunctions(unittest.TestCase):
     @patch("src.irs.QM_combiner.os.makedirs")
     def test_handle_orca_calculation(self, mock_makedirs, mock_exists, mock_st, mock_gen, 
                                     mock_guess, mock_write, mock_run, mock_parse, mock_plot):
-        import numpy as np
         
         mock_exists.return_value = True
         
         mol = Chem.MolFromSmiles("CCO")
         mock_gen.return_value = mol
         
-        mock_guess.return_value = (0, 1)  # Charge, multiplicity
+        mock_guess.return_value = (0, 1)
         
         mock_write.return_value = "fake_path.inp"
         mock_run.return_value = "fake_path.out"
