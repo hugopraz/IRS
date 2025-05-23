@@ -19,9 +19,9 @@ The first one is the simulation of IR spectra using Psi4 and ORCA, two different
 
 | Name                  | GitHub                                  |
 |-----------------------|------------------------------------------|
-| Ryans Chen            | [@ryanschen0](https://github.com/ryanschen0) ![GitHub](https://img.shields.io/badge/GitHub-ryanschen0-181717.svg?style=flat&logo=github) |
-| Hugo Praz             | [@hugopraz](https://github.com/hugopraz) ![GitHub](https://img.shields.io/badge/GitHub-hugopraz-181717.svg?style=flat&logo=github) |
-| Anders Thomas Eggen   | [@Anders-Eggen](https://github.com/Anders-Eggen) ![GitHub](https://img.shields.io/badge/GitHub-Anders--Eggen-181717?style=flat&logo=github) |
+| Ryans Chen            | ![GitHub](https://img.shields.io/badge/GitHub-ryanschen0-181717.svg?style=flat&logo=github) |
+| Hugo Praz             | ![GitHub](https://img.shields.io/badge/GitHub-hugopraz-181717.svg?style=flat&logo=github) |
+| Anders Thomas Eggen   | ![GitHub](https://img.shields.io/badge/GitHub-Anders--Eggen-181717?style=flat&logo=github) |
 
 </div>
 
@@ -35,7 +35,7 @@ The first one is the simulation of IR spectra using Psi4 and ORCA, two different
 </p>
 
 <p align="center">
-  <a href="https://github.com/ryanschen0/IRS/graphs/commit-activity">Commit Activity</a>
+  <p><strong>Commit activity:</strong> <a href="https://github.com/ryanschen0/IRS/graphs/commit-activity">link</a></p>
 </p>
 
 <p align="center">

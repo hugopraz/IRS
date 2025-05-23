@@ -19,9 +19,9 @@ The first one is the simulation of IR spectra using Psi4 and ORCA, two different
 
 | Name                  | GitHub                                  |
 |-----------------------|------------------------------------------|
-| Ryans Chen            | [@ryanschen0](https://github.com/ryanschen0) ![GitHub](https://img.shields.io/badge/GitHub-ryanschen0-181717.svg?style=flat&logo=github) |
-| Hugo Praz             | [@hugopraz](https://github.com/hugopraz) ![GitHub](https://img.shields.io/badge/GitHub-hugopraz-181717.svg?style=flat&logo=github) |
-| Anders Thomas Eggen   | [@Anders-Eggen](https://github.com/Anders-Eggen) ![GitHub](https://img.shields.io/badge/GitHub-Anders--Eggen-181717?style=flat&logo=github) |
+| Ryans Chen            | ![GitHub](https://img.shields.io/badge/GitHub-ryanschen0-181717.svg?style=flat&logo=github) |
+| Hugo Praz             | ![GitHub](https://img.shields.io/badge/GitHub-hugopraz-181717.svg?style=flat&logo=github) |
+| Anders Thomas Eggen   | ![GitHub](https://img.shields.io/badge/GitHub-Anders--Eggen-181717?style=flat&logo=github) |
 
 </div>
 
@@ -35,7 +35,7 @@ The first one is the simulation of IR spectra using Psi4 and ORCA, two different
 </p>
 
 <p align="center">
-  <a href="https://github.com/ryanschen0/IRS/graphs/commit-activity">Commit Activity</a>
+  <p><strong>Commit activity:</strong> <a href="https://github.com/ryanschen0/IRS/graphs/commit-activity">link</a></p>
 </p>
 
 <p align="center">
@@ -48,18 +48,18 @@ The first one is the simulation of IR spectra using Psi4 and ORCA, two different
 </p>
 
 ## Theoretical Background of Infra-Red Spectroscopy
-All standard quantum chemistry methods (HF, DFT, MP2, CCSD, etc.) are within the Born–Oppenheimer framework, meaning that this approximation is taken for both quantum mechanical packages. <br>
-Quantum Mechanical Calculations using Psi4: <br>
+QM Calculations using Psi4:
 This approach uses first principle quantum mechanics to simulate an IR spectrum, using the following approximations taken by the Psi4 package:
 - Molecule is in Gas Phase at T=0K 
 - Harmonic Approximation for Frequency Calculations
+- Born–Oppenheimer approximation (separating electronic and nuclear motion)
 
-The vibrational frequencies are calculated by assuming the lowest harmonic energy potential. The Psi4 package then computes the Hessian matrix, which is diagonalized to obtain normal mode frquencies. The IR intensities are then computed by analytically calculating the change of the dipole moment in respect of the vibrational motion. The interface offers three computational methods—HF, B3LYP, and MP2—each providing a balance between accuracy and time constraint to suit different precision needs.
+The vibrational frequencies are calculated by assuming the lowest harmonic energy potential. The Psi4 package then computes the Hessian matrix, which is diagonalized to obtain normal mode frquencies. The IR intensities are then computed by analytically calculating the change of the dipole moment in respect of the vibrational motion.
 
-Quantum Mechanical Calculations using ORCA: <br>
+QM Calculations using ORCA: 
 This approach simulates an IR spectra similarly to the Psi4 method, relying on Density Functional Theory (DFT) as implemented in the ORCA package. The vibrational frequencies are computed under the same approximations as in the Psi4 package. As ORCA uses different integral libraries and optimization schemes than Psi4, slight variations in intensities or frequencies are expected, especially in the case of a large molecule.
 
-Structural approach: <br>
+Structural approach:
 This method relies on an empirical, rule-based approach to approximate IR spectra by identifying key molecular features through three distinct strategies. First, functional groups are detected using SMARTS-based substructure matching, enabling the recognition of characteristic moieties such as alcohols, ketones, and esters, each associated with specific IR absorption bands. Second, the classification of acyclic C–H bonds is performed by analyzing the hybridization state (sp³, sp², sp) of the carbon atom to which the hydrogen is attached, as these differences influence vibrational stretching frequencies. Finally, carbon–carbon bonding patterns, including single, double, and triple bonds, are counted to account for their respective spectral contributions. By combining these structural insights, the method constructs a composite IR spectrum that reflects the vibrational fingerprint of the molecule.
 
 
@@ -111,33 +111,6 @@ Finally, to generate the IR spectrum, the following button must be clicked.
 </p>
 
 ## 🛠️ Installation
-1. ORCA installation: <br>
-Create installation directory,
-for example <br>
-```bash
- C:\ORCA\
-```
-Create Output Folder,
-for example:
-```bash
-C:\temp\orca_output\
-```
-This directory will store ORCA's output files. <br> <br>
-Then, visit the ORCA Forum and create an account or log in: <br>
-https://orcaforum.kofo.mpg.de/app.php/portal <br>
-Navigate to the "Downloads" section. <br>
-For Windows, download the following three zip files:<br>
-```bash
-orca_5_0_4_win64_part1.zip
-orca_5_0_4_win64_part2.zip
-orca_5_0_4_win64_part3.zip
-```
-For Linux or macOS, download the corresponding ORCA tarball (.tar.xz) instead of the zip files. <br>
-   Note: The version numbers may vary but ensure downloading version 5.0.2 or newer for the project to run properly. <br> <br>
-Extract Archives: <br>
-Use a tool like WinRAR or 7-Zip to extract each of the three zip files into the installation directory. Ensure all files from the three parts are consolidated into the same folder.
-
-2. Package setup <br>
 Pip install
 irspectrum-sim can be installed using pip
 ```bash
@@ -260,3 +233,12 @@ pip install --upgrade pip
 ```bash
 python3 -m pip install --upgrade pip
 ```
+
+## Data Sources
+
+The following sources were used to generate the `dict_fg_IR_data.json` dictionnary. 
+
+- [NC State Organic Chemistry Textbook](https://ncstate.pressbooks.pub/organicchem/chapter/infrared-spectra-of-some-common-functional-groups/). Accessed May 23, 2025.
+- [this IR spectrum table](https://studylib.net/doc/25856154/ir-spectrum-table) on StudyLib. Accessed May 23, 2025.
+- [LibreTexts Chemistry](https://chem.libretexts.org/Courses/SUNY_Oneonta/Chem_322_Lecture_Content/05%3A_Organohalogen_and_Organometallic_Compounds/5.03%3A_Spectroscopic_Properties). Accessed May 23, 2025.
+- [SDBS (Spectral Database for Organic Compounds)](https://sdbs.db.aist.go.jp/SearchInformation.aspx), maintained by AIST Japan. Accessed May 23, 2025.

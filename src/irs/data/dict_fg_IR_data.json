@@ -15,7 +15,7 @@
         "widths": [10]
     },
      "Fluoroalkane": {
-        "frequencies": [1200],
+        "frequencies": [1050],
         "intensities": [35],
         "widths": [10]
     },
@@ -110,24 +110,24 @@
         "widths": [10, 20]
     },
     "N-Oxide (Primary)": {
-        "frequencies": [3300, 3500, 915],
+        "frequencies": [3300, 3500, 1240],
         "intensities": [35, 35, 35],
         "widths": [10, 10, 10]
     },
     "N-Oxide (Secondary)": {
-        "frequencies": [3400, 915],
+        "frequencies": [3400, 1240],
         "intensities": [35, 35],
         "widths": [10, 10]
     },
     "N-Oxide (Tertiary)": {
-        "frequencies": [915],
+        "frequencies": [1240],
         "intensities": [35],
         "widths": [10]
     },
     "N-Oxide (Aromatic)": {
-        "frequencies": [1280, 915],
-        "intensities": [35, 35],
-        "widths": [10, 10]
+        "frequencies": [1280],
+        "intensities": [35],
+        "widths": [10]
     },
     "N-hydroxyl (imine)": {
         "frequencies": [3400, 975, 1400],
@@ -160,9 +160,9 @@
         "widths": [10]
     },
     "Pyridine": {
-        "frequencies": [1590, 1470, 1230],
-        "intensities": [35, 25, 35],
-        "widths": [10, 20, 25]
+        "frequencies": [3400],
+        "intensities": [35],
+        "widths": [65]
     },
     "Pyrrole": {
         "frequencies": [3400, 1260, 1550],
@@ -170,9 +170,9 @@
         "widths": [65, 25, 10]
     },
    "Furan": {
-        "frequencies": [1100, 800],
-        "intensities": [35, 25],
-        "widths": [10, 20]
+        "frequencies": [3160],
+        "intensities": [35],
+        "widths": [25]
     },
     "Quinone": {
         "frequencies": [1700],
